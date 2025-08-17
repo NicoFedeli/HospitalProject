@@ -1,6 +1,5 @@
-﻿using System.Security.Claims;
-using HospitalAPI;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 namespace HospitalAPI;
 
 public class ClaimsTransformationService : IClaimsTransformation

@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using HospitalAPI.Models;
+﻿using HospitalAPI.Models;
 using HospitalAPI.Repository;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalAPI.Controllers
 {
@@ -127,6 +121,58 @@ namespace HospitalAPI.Controllers
         }
 
 
+        [Authorize]
+        [HttpGet("GetPaidPatientBills", Name = "GetPaidBillsByPatientId")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult GetPaid(int id)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var bills = context.bills.Where(x => x.IDPatient == id && x.Status == Constants.BillStatusPaid);
+                        if (bills.Any())
+                        {
+                            return Ok(new BillResponse()
+                            {
+                                Status = "OK",
+                                Bills = bills.ToList()
+                            });
+                        }
+                        else
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"All bill has been paid for Patient {id}"
+                            });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+        }
+
 
         [Authorize]
         [HttpPost("CreateBill", Name = "CreateBill")]
@@ -217,7 +263,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new GetResponse()
                             {
                                 Status = "OK",
-                                Message = $"Bill {id} paid successfully"
+                                Message = $"Bill {id} successfully paid"
                             });
                         }
                     }
