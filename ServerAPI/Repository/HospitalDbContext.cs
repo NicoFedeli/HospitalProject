@@ -8,6 +8,10 @@ namespace HospitalAPI.Repository
         public DbSet<Doctor> doctors { get; set; }
         public DbSet<Nurse> nurses { get; set; }
         public DbSet<Patient> patients { get; set; }
+        public DbSet<Bill> bills { get; set; }
+        public DbSet<Appointment> appointments { get; set; }
+        public DbSet<Record> records { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
