@@ -10,7 +10,7 @@ using System.Text;
 namespace HospitalAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
 
@@ -191,6 +191,61 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        [Authorize]
+        [HttpDelete("DeleteDoctor", Name = "DeleteDoctor")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult DeleteDoctor(int doctorId)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var oldDoctor = context.doctors.FirstOrDefault(x => x.ID == doctorId);
+                        if (oldDoctor == null)
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"No doctor found with id {doctorId}"
+                            });
+
+                        context.doctors.Remove(oldDoctor);
+                        context.SaveChanges();
+
+                        return Ok(new GetResponse()
+                        {
+                            Status = "OK",
+                            Message = $"Doctor {doctorId} successfully deleted "
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("AddNurse", Name = "AddNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
@@ -262,6 +317,60 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        [Authorize]
+        [HttpDelete("DeleteNurse", Name = "DeleteNurse")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult DeleteNurse(int nurseId)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var oldNurse = context.nurses.FirstOrDefault(x => x.ID == nurseId);
+                        if (oldNurse == null)
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"No nurse found with id {nurseId}"
+                            });
+
+                        context.nurses.Remove(oldNurse);
+                        context.SaveChanges();
+
+                        return Ok(new GetResponse()
+                        {
+                            Status = "OK",
+                            Message = $"Nurse {nurseId} successfully deleted "
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AddPatient", Name = "AddPatient")]
@@ -332,6 +441,61 @@ namespace HospitalAPI.Controllers
                     Message = ex.Message
                 });
             }
+        }
+
+        [Authorize]
+        [HttpDelete("DeletePatient", Name = "DeletePatient")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult DeletePatient(int patientId)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var oldPatient = context.patients.FirstOrDefault(x => x.ID == patientId);
+                        if (oldPatient == null)
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"No patient found with id {patientId}"
+                            });
+
+                        context.patients.Remove(oldPatient);
+                        context.SaveChanges();
+
+                        return Ok(new GetResponse()
+                        {
+                            Status = "OK",
+                            Message = $"Patient {patientId} successfully deleted "
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+
         }
 
         private static bool UsernameAlreadyExist(HospitalDbContext context, string Username)
