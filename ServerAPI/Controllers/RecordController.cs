@@ -137,8 +137,8 @@ namespace HospitalAPI.Controllers
                     {
                         string? rightDepartment = FindDoctorDepartment(doctorId, context);
 
-                        var records = context.records.Where(x => x.IDDoctor == doctorId).ToList();
-                        if (records.Any())
+                        var records = context.records.ToList();
+                        if (records.Any() && !String.IsNullOrEmpty(rightDepartment))
                         {
                             List<Record> rightRecords = new List<Record>();
                             foreach (var item in records)
@@ -148,11 +148,18 @@ namespace HospitalAPI.Controllers
                                     rightRecords.Add(item);
 
                             }
-                            return Ok(new RecordResponse()
-                            {
-                                Status = "OK",
-                                Records = rightRecords
-                            });
+                            if (rightRecords.Count > 0)
+                                return Ok(new RecordResponse()
+                                {
+                                    Status = "OK",
+                                    Records = rightRecords
+                                });
+                            else
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No records found for department {rightDepartment}"
+                                });
                         }
                         else
                             return BadRequest(new GetResponse()
@@ -252,8 +259,8 @@ namespace HospitalAPI.Controllers
                     {
                         string? rightDepartment = FindNurseDepartment(nurseId, context);
 
-                        var records = context.records.Where(x => x.IDNurse == nurseId).ToList();
-                        if (records.Any())
+                        var records = context.records.ToList();
+                        if (records.Any() && !String.IsNullOrEmpty(rightDepartment))
                         {
                             List<Record> rightRecords = new List<Record>();
                             foreach (var item in records)
@@ -263,11 +270,18 @@ namespace HospitalAPI.Controllers
                                     rightRecords.Add(item);
 
                             }
-                            return Ok(new RecordResponse()
-                            {
-                                Status = "OK",
-                                Records = rightRecords
-                            });
+                            if(rightRecords.Count>0)
+                                return Ok(new RecordResponse()
+                                {
+                                    Status = "OK",
+                                    Records = rightRecords
+                                });
+                            else
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No records found for department {rightDepartment}"
+                                });
                         }
                         else
                             return BadRequest(new GetResponse()

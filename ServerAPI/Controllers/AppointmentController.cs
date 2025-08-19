@@ -292,8 +292,8 @@ namespace HospitalAPI.Controllers
                     {
                         string? rightDepartment = FindDoctorDepartment(doctorId, context);
 
-                        var appointments = context.appointments.Where(x => x.IDDoctor == doctorId).ToList();
-                        if (appointments.Any())
+                        var appointments = context.appointments.ToList();
+                        if (appointments.Any() && !String.IsNullOrEmpty(rightDepartment))
                         {
                             List<Appointment> rightAppointments = new List<Appointment>();
                             foreach (var item in appointments)
@@ -303,11 +303,18 @@ namespace HospitalAPI.Controllers
                                     rightAppointments.Add(item);
 
                             }
-                            return Ok(new AppointmentResponse()
-                            {
-                                Status = "OK",
-                                Appointments = rightAppointments
-                            });
+                            if (rightAppointments.Count > 0)
+                                return Ok(new AppointmentResponse()
+                                {
+                                    Status = "OK",
+                                    Appointments = rightAppointments
+                                });
+                            else
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No appointments found for department {rightDepartment}"
+                                });
                         }
                         else
                             return BadRequest(new GetResponse()
