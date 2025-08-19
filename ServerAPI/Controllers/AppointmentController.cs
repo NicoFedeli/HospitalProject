@@ -9,9 +9,9 @@ namespace HospitalAPI.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<AppointmentController> _logger;
 
-        public AppointmentController(ILogger<UserController> logger)
+        public AppointmentController(ILogger<AppointmentController> logger)
         {
             _logger = logger;
         }
@@ -278,12 +278,11 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
         [Authorize]
-        [HttpGet("GetAllDoctorAppointments", Name = "GetAllDoctorAppointments")]
+        [HttpGet("GetAllDepartmentAppointments", Name = "GetAllDepartmentAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
-        public IActionResult GetAllDoctorAppointments(int doctorID)
+        public IActionResult GetAllDepartmentAppointments(int doctorId)
         {
             try
             {
@@ -291,7 +290,76 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.Where(x => x.IDDoctor == doctorID);
+                        string? rightDepartment = FindDoctorDepartment(doctorId, context);
+
+                        var appointments = context.appointments.ToList();
+                        if (appointments.Any() && !String.IsNullOrEmpty(rightDepartment))
+                        {
+                            List<Appointment> rightAppointments = new List<Appointment>();
+                            foreach (var item in appointments)
+                            {
+                                string? department = FindDoctorDepartment(item.IDDoctor, context);
+                                if (department == rightDepartment)
+                                    rightAppointments.Add(item);
+
+                            }
+                            if (rightAppointments.Count > 0)
+                                return Ok(new AppointmentResponse()
+                                {
+                                    Status = "OK",
+                                    Appointments = rightAppointments
+                                });
+                            else
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No appointments found for department {rightDepartment}"
+                                });
+                        }
+                        else
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"No records found for doctor {doctorId}"
+                            });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("GetAllDoctorAppointments", Name = "GetAllDoctorAppointments")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult GetAllDoctorAppointments(int doctorId)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var appointments = context.appointments.Where(x => x.IDDoctor == doctorId);
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
@@ -304,7 +372,7 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Message = $"No Appointments for doctor {doctorID} in Db"
+                                Message = $"No Appointments for doctor {doctorId} in Db"
                             });
                     }
                     catch (Exception ex)
@@ -466,7 +534,7 @@ namespace HospitalAPI.Controllers
                         return Ok(new GetResponse()
                         {
                             Status = "OK",
-                            Message = $"Apointment {appointment.ID} successfully modified "
+                            Message = $"Appointment {appointment.ID} successfully modified "
                         });
                     }
                     catch (Exception ex)
@@ -495,6 +563,66 @@ namespace HospitalAPI.Controllers
 
         }
 
+        [Authorize]
+        [HttpDelete("DeleteAppointment", Name = "DeleteAppointment")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
+        public IActionResult DeleteAppointment(int appointmentId)
+        {
+            try
+            {
+                using (var context = new HospitalDbContext())
+                {
+                    try
+                    {
+                        var oldAppointment = context.appointments.FirstOrDefault(x => x.ID == appointmentId);
+                        if (oldAppointment == null)
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = $"No appointments found with id {appointmentId}"
+                            });
 
+                        context.appointments.Remove(oldAppointment);
+                        context.SaveChanges();
+
+                        return Ok(new GetResponse()
+                        {
+                            Status = "OK",
+                            Message = $"Appointment {appointmentId} successfully deleted "
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                        return BadRequest(new GetResponse()
+                        {
+                            Status = "KO",
+                            Message = ex.Message
+                        });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = ex.Message
+                });
+            }
+
+        }
+
+        private static string? FindDoctorDepartment(int doctorId, HospitalDbContext context)
+        {
+            var doctor = context.doctors.FirstOrDefault(x => x.ID == doctorId);
+            var rightDepartment = doctor?.Department;
+            return rightDepartment;
+        }
     }
 }

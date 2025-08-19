@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace HospitalAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BillController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<BillController> _logger;
 
-        public BillController(ILogger<UserController> logger)
+        public BillController(ILogger<BillController> logger)
         {
             _logger = logger;
         }
