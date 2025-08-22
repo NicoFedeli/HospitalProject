@@ -44,7 +44,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("Login", Name = "Login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -244,7 +244,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddDoctor", Name = "AddDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
@@ -586,7 +586,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddNurse", Name = "AddNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
@@ -817,7 +817,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddPatient", Name = "AddPatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
