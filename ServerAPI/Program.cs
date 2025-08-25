@@ -14,7 +14,6 @@ builder.Services.AddSwaggerGen();
 
 
 //RDF NEW
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });

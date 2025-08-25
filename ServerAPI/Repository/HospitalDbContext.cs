@@ -16,9 +16,13 @@ namespace HospitalAPI.Repository
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "Server=localhost;Database=Hospital;User Id=nico;Password=Admin123;TrustServerCertificate=True;";
+            //var connectionString = "Server=localhost;Database=Hospital;User Id=nico;Password=Admin123;TrustServerCertificate=True;"; // NICO
+            var connectionString = "Server=localhost\\SQLEXPRESS;Database=Hospital;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;"; // BERTA
+
 
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }
+
+//dotnet ef dbcontext scaffold "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=Hospital" Microsoft.EntityFrameworkCore.SqlServer -o Models

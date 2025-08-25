@@ -1,0 +1,24 @@
+﻿
+@* VSCEGLI LA CONDIZIONE DA INSERIRE: SESSION O COOKIE *@
+@if (Context.User.Identity.Name != null)
+{
+
+    <form asp-controller="User" asp-action="LogOut" method="post" id="LogoutForm" class="navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                Hello @Context.User.Identity.Name!
+            </li>
+            <li>
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log Off</button>
+            </li>
+        </ul>
+    </form>
+}
+else
+{
+
+    <ul class="nav navbar-nav navbar-right">
+        <li><a class="nav-link text-dark" asp-controller="User" asp-action="Registration">Register</a></li>
+        <li><a class="nav-link text-dark" asp-controller="User" asp-action="Login">Login</a></li>
+    </ul>
+}

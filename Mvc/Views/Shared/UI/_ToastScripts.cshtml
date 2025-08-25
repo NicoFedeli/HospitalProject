@@ -1,0 +1,22 @@
+﻿@* Sezione per mostrare i toast*@
+@using Hospital.Helpers
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+	var (type, msg) = ToastHelper.GetAndClearToast(HttpContextAccessor.HttpContext.Session); // Recupera e cancella il messaggio di toast dalla sessione
+}
+
+@if (!string.IsNullOrEmpty(msg))
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $(document).Toasts('create', {
+                class: '@(type == "success" ? "bg-success toast-wide" : "bg-danger toast-wide")',
+                title: '@(type == "success" ? "Successo" : "Errore")',
+                body: '@msg',
+                autohide: true,
+                delay: 3000
+            });
+        });
+    </script>
+}

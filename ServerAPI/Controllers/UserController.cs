@@ -45,18 +45,26 @@ namespace HospitalAPI.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("Login", Name = "Login")]
+        [HttpPost("Login", Name = "Login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
-        public IActionResult Get(string username, string password)
+        public IActionResult Login(LoginModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = "Dati non validi"
+                });
+            }
             try
             {
                 using (var context = new HospitalDbContext())
                 {
                     try
                     {
-                        return SearchUser(username, password, context);
+                        return SearchUser(model.Username, model.Password, context);
                     }
                     catch (Exception ex)
                     {
@@ -1011,24 +1019,44 @@ namespace HospitalAPI.Controllers
                             Message = $"{username} not found in DB"
                         });
                     else
-                        return Ok(new GetResponse()
+                        return Ok(new LoginResponse()
                         {
                             Status = "OK",
-                            Message = $"{username} logged succesfully as patient"
+                            Message = $"{username} logged succesfully as patient",
+                            Data = new LoginResponseData {
+                                Id = patient.ID,
+                                Username = patient.Username,
+                                Role = "Patient",
+                                Token = null
+                            }
                         });
                 }
                 else
-                    return Ok(new GetResponse()
+                    return Ok(new LoginResponse()
                     {
                         Status = "OK",
-                        Message = $"{username} logged succesfully as nurse"
+                        Message = $"{username} logged succesfully as nurse",
+                        Data = new LoginResponseData {
+                            Id = nurse.ID,
+                            Username = nurse.Username,
+                            Role = "Nurse",
+                            Admin = nurse.Admin.ToString(),
+                            Token = null
+                        }
                     });
             }
             else
-                return Ok(new GetResponse()
+                return Ok(new LoginResponse()
                 {
                     Status = "OK",
-                    Message = $"{username} logged succesfully as doctor"
+                    Message = $"{username} logged succesfully as doctor",
+                    Data = new LoginResponseData {
+                        Id = doctor.ID,
+                        Username = doctor.Username,
+                        Role = "Doctor" ,
+                        Admin = doctor.Admin.ToString(),
+                        Token = null
+                    }
                 });
         }
 

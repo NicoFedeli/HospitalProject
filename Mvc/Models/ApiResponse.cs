@@ -2,9 +2,9 @@
 {
     public class ApiResponse<T>
     {
-        public string Status { get; set; }
-        public string? Message { get; set; }
-        public T? Data { get; set; }
+        public string Status { get; set; }      // "OK" o "KO"
+        public string? Message { get; set; }    // opzionale, present in caso di errore
+        public T? Data { get; set; }            // opzionale, presente in caso di successo
     }
 }
 /*

@@ -1,3 +1,7 @@
+// Dimensione minima per i toast
+.toast-wide {
+    min-width: 400px;
+}
 .toast-title {
   font-weight: bold;
 }

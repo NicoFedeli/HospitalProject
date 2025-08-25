@@ -43,6 +43,10 @@
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
                 </li>
+                @* <li class="nav-item d-none d-sm-inline-block">
+                    <a class="nav-link" asp-controller="User" asp-action="Login">Login</a>
+                </li> *@
+                @await Html.PartialAsync("_NavUserLogin")
             </ul>
 
             <!-- SEARCH FORM -->
@@ -935,5 +939,6 @@
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="dist/js/pages/dashboard.js"></script>
 
+    @await Html.PartialAsync("UI/_ToastScripts")
 </body>
 </html>
