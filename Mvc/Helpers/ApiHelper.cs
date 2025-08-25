@@ -3,7 +3,7 @@ using Hospital.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
-public interface IApiService
+public interface IApiHelper
 {
     Task<ApiResponse<T>> GetAsync<T>(string relativeUrl, Dictionary<string, string> queryParams); // Passo come parametro l'URL relativo, seguito da eventuali query string
     Task<ApiResponse<T>> PostAsync<T>(string relativeUrl, object? data);
@@ -11,12 +11,12 @@ public interface IApiService
     Task<ApiResponse<T>> DeleteAsync<T>(string relativeUrl);
 }
 
-public class ApiService : IApiService
+public class ApiHelper : IApiHelper
 {
     private readonly HttpClient _httpClient;
-    public ApiService(HttpClient httpClient) => _httpClient = httpClient;
+    public ApiHelper(HttpClient httpClient) => _httpClient = httpClient;
 
-    // Implementazione dei metodi dell'interfaccia IApiService
+    // Implementazione dei metodi dell'interfaccia IApiHelper
     // Evito così di ripetere la chiamta HttpClient in ogni controller
 
     public async Task<ApiResponse<T>> GetAsync<T>(string url, Dictionary<string, string> queryParams)

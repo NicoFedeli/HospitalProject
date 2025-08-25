@@ -8,8 +8,8 @@ namespace Hospital.Models
         [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Password obbligatoria")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage ="min 5 character allowed")]
+        [Required(ErrorMessage = "Password matadory")]
+        [StringLength(100, MinimumLength = 5, ErrorMessage ="min 5 character allowed")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

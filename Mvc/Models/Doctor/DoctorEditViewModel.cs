@@ -3,10 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hospital.Models.Doctor
 {
-    public class DoctorCreateEditViewModel
+    public class DoctorEditViewModel
     {
         public class DoctorCreateViewModel
         {
+            [Required]
+            [Key]
             public int ID { get; set; } // Not necessary for creation, but useful for editing
 
             [Required(ErrorMessage = "First name is required")]

@@ -6,6 +6,7 @@
 	var (type, msg) = ToastHelper.GetAndClearToast(HttpContextAccessor.HttpContext.Session); // Recupera e cancella il messaggio di toast dalla sessione
 }
 
+
 @if (!string.IsNullOrEmpty(msg))
 {
     <script>

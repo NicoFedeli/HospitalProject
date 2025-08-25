@@ -14,7 +14,7 @@ builder.Services.AddSession(options =>
 });
 
 // Registro HttpClient + ApiService
-builder.Services.AddHttpClient<IApiService, ApiService>(client =>
+builder.Services.AddHttpClient<IApiHelper, ApiHelper>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
 });

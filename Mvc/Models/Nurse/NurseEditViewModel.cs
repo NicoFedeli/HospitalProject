@@ -2,8 +2,10 @@
 
 namespace Hospital.Models.Nurse
 {
-    public class NurseCreateEditViewModel
+    public class NurseEditViewModel
     {
+        [Required]
+        [Key]
         public int ID { get; set; }
 
         [Required(ErrorMessage = "First name is required")]
