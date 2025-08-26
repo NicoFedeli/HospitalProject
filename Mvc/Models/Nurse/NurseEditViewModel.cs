@@ -37,7 +37,7 @@ namespace Hospital.Models.Nurse
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
         [Display(Name = "Department")]
-        public string Department { get; set; }
+        public Department? Department { get; set; }
 
         [Display(Name = "Is Primary Nurse?")] // Traduzione da migliorare
         public bool Admin { get; set; }

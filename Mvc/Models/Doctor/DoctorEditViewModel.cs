@@ -24,7 +24,7 @@ namespace Hospital.Models.Doctor
             [Required(ErrorMessage = "Speciality is required")]
             [StringLength(50)]
             [DisplayName("Speciality")]
-            public string Speciality { get; set; }
+            public Speciality? Speciality { get; set; }
 
             [Required(ErrorMessage = "Username is required")]
             [StringLength(20)]
@@ -45,7 +45,7 @@ namespace Hospital.Models.Doctor
             [Required(ErrorMessage = "Department is required")]
             [StringLength(50)]
             [DisplayName("Department")]
-            public string Department { get; set; }
+            public Department? Department { get; set; }
 
             [DisplayName("Is Primary Doctor?")]
             public bool Admin { get; set; }

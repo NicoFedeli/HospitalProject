@@ -129,16 +129,24 @@
                                 <span asp-validation-for="Nurse.Phone" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group">
+                            @* <div class="form-group">
                                 <label asp-for="Nurse.Department">
                                     <span class="fas fa-hospital-user mr-1"></span> @Html.DisplayNameFor(m => m.Nurse.Department)
                                 </label>
                                 <input asp-for="Nurse.Department" class="form-control">
                                 <span asp-validation-for="Nurse.Department" class="text-danger"></span>
+                            </div> *@
+
+                            <div class="form-group">
+                                <label asp-for="Nurse.Department"></label>
+                                <select asp-for="Nurse.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                    <option value="">Select Department</option>
+                                </select>
+                                <span asp-validation-for="Nurse.Department" class="text-danger"></span>
                             </div>
 
                             <div class="form-group form-check">
-                                <input asp-for="Nurse.Admin" class="form-check-input" type="checkbox" id="doctorAdminCheck">
+                                <input asp-for="Nurse.Admin" class="form-check-input" type="checkbox" id="nurseAdminCheck">
                                 <label asp-for="Nurse.Admin">
 								    @Html.DisplayNameFor(m => m.Nurse.Admin) <span class="fas fa-user-shield mr-1"></span>
 							    </label>
@@ -157,11 +165,18 @@
                                 <span asp-validation-for="Doctor.Phone" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group">
+                            @* <div class="form-group">
                                 <label asp-for="Doctor.Department">
                                     <span class="fas fa-hospital-user mr-1"></span> @Html.DisplayNameFor(m => m.Doctor.Department)
                                 </label>
                                 <input asp-for="Doctor.Department" class="form-control">
+                                <span asp-validation-for="Doctor.Department" class="text-danger"></span>
+                            </div> *@
+                            <div class="form-group">
+                                <label asp-for="Doctor.Department"></label>
+                                <select asp-for="Doctor.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                    <option value="">Select Department</option>
+                                </select>
                                 <span asp-validation-for="Doctor.Department" class="text-danger"></span>
                             </div>
 
@@ -173,11 +188,18 @@
                                 <span asp-validation-for="Doctor.Admin" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group">
+                            @* <div class="form-group">
                                 <label asp-for="Doctor.Speciality">
                                     <span class="fas fa-stethoscope mr-1"></span> @Html.DisplayNameFor(m => m.Doctor.Speciality)
                                 </label>
                                 <input asp-for="Doctor.Speciality" class="form-control">
+                                <span asp-validation-for="Doctor.Speciality" class="text-danger"></span>
+                            </div> *@
+                            <div class="form-group">
+                                <label asp-for="Doctor.Speciality"></label>
+                                <select asp-for="Doctor.Speciality" class="form-control" asp-items="Html.GetEnumSelectList<Speciality>()">
+                                    <option value="">Select Speciality</option>
+                                </select>
                                 <span asp-validation-for="Doctor.Speciality" class="text-danger"></span>
                             </div>
 	
@@ -257,17 +279,37 @@
             syncRoleUI(); // al load
 
             // Avanti con validazione
-            $('#toStep2').on('click', function (e) {
-                e.preventDefault(); // blocca submit
-                if ($('#signupForm').valid()) {
-                    // Mantengo i dati readonly
-                    $('#logins-part').prop('readonly', true);
-                    // Abilita i campi step 2
-                    $('#information-part').prop('readonly', false);
+            // $('#toStep2').on('click', function (e) {
+            //     e.preventDefault(); // blocca submit
+            //     if ($('#signupForm').valid()) {
+            //         // Mantengo i dati readonly
+            //         $('#logins-part').prop('readonly', true);
+            //         // Abilita i campi step 2
+            //         $('#information-part').prop('readonly', false);
 
-                    stepper.next();
+            //         stepper.next();
+            //     }
+            // });
+            $('#toStep2').on('click', function (e) {
+                e.preventDefault();
+
+                // Controllo campi opzionali di Step 1
+                let optionalFields = ["#Common_Username","#Common_Name","#Common_Surname","#Common_Password","#Common_ConfirmPassword"];
+                let hasEmptyOptional = optionalFields.some(id => $(id).val().trim() === "");
+
+                if (hasEmptyOptional) {
+                    toastr.warning(
+                        "Some optional fields in Step 1 are empty. You can continue, but we recommend completing them.", 
+                        "Missing information"
+                    );
                 }
+
+                // Se arrivo qui: valido → posso andare avanti
+                $('#logins-part').prop('readonly', true);
+                $('#information-part').prop('readonly', false);
+                stepper.next();
             });
+
 
             $('#backTo1').on('click', function (e) {
                 e.preventDefault();

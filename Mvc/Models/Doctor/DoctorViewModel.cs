@@ -13,7 +13,7 @@ namespace Hospital.Models.Doctor
         public string Surname { get; set; }
 
         [DisplayName("Specitlity")]
-        public string Speciality { get; set; }
+        public Speciality? Speciality { get; set; }
 
         [DisplayName("Username")]
         public string Username { get; set; }
@@ -22,7 +22,7 @@ namespace Hospital.Models.Doctor
         public string Phone { get; set; }
 
         [DisplayName("Department")]
-        public string Department { get; set; }
+        public Department? Department { get; set; }
 
         [DisplayName("Is Primary Doctor?")]
         public bool Admin { get; set; }

@@ -25,9 +25,12 @@
     <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
     <!-- summernote -->
     <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
-
+    <!-- Toastr css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+    <partial name="UI/_Notification" />
+
 	<div class="wrapper">
 
         <!-- Navbar -->
@@ -939,6 +942,10 @@
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="dist/js/pages/dashboard.js"></script>
 
-    @await Html.PartialAsync("UI/_ToastScripts")
+    <!-- Toastr js -->
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    @* @await Html.PartialAsync("UI/_ToastScripts") *@
 </body>
 </html>

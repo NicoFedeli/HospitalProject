@@ -4,6 +4,24 @@ using System.ComponentModel.DataAnnotations;
 namespace Hospital.Models
 {
     public enum UserRole { Patient, Nurse, Doctor }
+    public enum Department
+    {
+        Cardiology,
+        Neurology,
+        Pediatrics,
+        Emergency,
+        General
+    }
+
+    public enum Speciality
+    {
+        Surgeon,
+        Cardiologist,
+        Neurologist,
+        Pediatrician,
+        GeneralPractitioner
+    }
+
 
     // Campi comuni per tutti i ruoli
     public class SignUpCommonViewModel
@@ -60,7 +78,7 @@ namespace Hospital.Models
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
         [DisplayName("Department")]
-        public string Department { get; set; }
+        public Department? Department { get; set; }
         // Lascio di default false, mostro comuqnque la checkbox in view per mostrare nel caso l'admin la voglia settare 
         // In produzione, solo un admin può settare un altro admin
         [DisplayName("Is Primary Nurse?")]
@@ -77,12 +95,12 @@ namespace Hospital.Models
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
         [DisplayName("Department")]
-        public string Department { get; set; }
+        public Department? Department { get; set; }
         
         [Required(ErrorMessage = "Speciality is required")]
         [StringLength(50)]
         [DisplayName("Speciality")]
-        public string Speciality { get; set; }
+        public Speciality? Speciality { get; set; }
 
         // Lascio di default false, mostro comuqnque la checkbox in view per mostrare nel caso l'admin la voglia settare 
         // In produzione, solo un admin può settare un altro admin

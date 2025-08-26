@@ -55,7 +55,7 @@ namespace HospitalAPI.Controllers
                 return BadRequest(new GetResponse()
                 {
                     Status = "KO",
-                    Message = "Dati non validi"
+                    Message = "Data not valid"
                 });
             }
             try
@@ -1016,7 +1016,7 @@ namespace HospitalAPI.Controllers
                         return BadRequest(new GetResponse()
                         {
                             Status = "KO",
-                            Message = $"{username} not found in DB"
+                            Message = "Invalid username or password."
                         });
                     else
                         return Ok(new LoginResponse()

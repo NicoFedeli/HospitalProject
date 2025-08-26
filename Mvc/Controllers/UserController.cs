@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Reflection;
+using System.Security.Claims;
 using Hospital.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -49,15 +50,12 @@ namespace Hospital.Controllers
                 //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 //HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-
-                HttpContext.Session.SetString("ToastType", "success");
-                HttpContext.Session.SetString("ToastMessage", $"Welcome {model.Username}!");
+                TempData["SuccessTitle"] = "Login successful";
+                TempData["SuccessMessage"] = $"Welcome back, {model.Username}!";
                 return RedirectToAction("Index", "Home");
             }
-            HttpContext.Session.SetString("ToastType", "error");
-            HttpContext.Session.SetString("ToastMessage", response.Message ?? "Login Error");
-
-            //ModelState.AddModelError("", response.Message ?? "Errore login");
+            TempData["ErrorTitle"] = "Login failed";
+            TempData["ErrorMessage"] = response.Message ?? "Login Error";
             return View(model);
         }
 
@@ -106,9 +104,9 @@ namespace Hospital.Controllers
             // 4) Se qualcosa non va, torna alla View con gli errori corretti
             if (!ModelState.IsValid)
             {
-                // Toast di errore settato in ModelState
-                HttpContext.Session.SetString("ToastType", "error");
-                HttpContext.Session.SetString("ToastMessage", "Error creating user");
+                // Toast di errore 
+                TempData["ErrorTitle"] = "Signup failed";
+                TempData["ErrorMessage"] = "An error occured while creating your account. Please, try again";
                 return View(vm);
             }
 
@@ -137,8 +135,8 @@ namespace Hospital.Controllers
                         var resp = await _api.PostAsync<ApiResponse<object>>("api/User/AddPatient", dto);
                         if (resp.Status == "OK")
                         {
-                            HttpContext.Session.SetString("ToastType", "success");
-                            HttpContext.Session.SetString("ToastMessage", "Patient created! Please, Log-in");
+                            TempData["SuccessTitle"] = "Account created";
+                            TempData["SuccessMessage"] = "Your account has been successfully created as a Patient. You can now log in.";
                             return RedirectToAction("Login", "User");
                         }
                         ModelState.AddModelError("", resp.Message ?? "Error creating patient");
@@ -165,8 +163,8 @@ namespace Hospital.Controllers
                         var resp = await _api.PostAsync<ApiResponse<object>>("api/User/AddNurse", dto);
                         if (resp.Status == "OK")
                         {
-                            HttpContext.Session.SetString("ToastType", "success");
-                            HttpContext.Session.SetString("ToastMessage", "Nurse created! Please, Log-in");
+                            TempData["SuccessTitle"] = "Account created";
+                            TempData["SuccessMessage"] = "Your account has been successfully created as a Nurse. You can now log in.";
                             return RedirectToAction("Login", "User");
                         }
                         ModelState.AddModelError("", resp.Message ?? "Error creating nurse");
@@ -194,8 +192,8 @@ namespace Hospital.Controllers
                         var resp = await _api.PostAsync<ApiResponse<object>>("api/User/AddDoctor", dto);
                         if (resp.Status == "OK")
                         {
-                            HttpContext.Session.SetString("ToastType", "success");
-                            HttpContext.Session.SetString("ToastMessage", "Doctor created! Please, Log-in");
+                            TempData["SuccessTitle"] = "Account created";
+                            TempData["SuccessMessage"] = "Your account has been successfully created as a Doctor. You can now log in.";
                             return RedirectToAction("Login", "User");
                         }
                         ModelState.AddModelError("", resp.Message ?? "Error creating doctor");
@@ -203,9 +201,9 @@ namespace Hospital.Controllers
                     }
             }
 
-            // Toast di errore settato in ModelState
-            HttpContext.Session.SetString("ToastType", "error");
-            HttpContext.Session.SetString("ToastMessage", "Error creating user");
+            // Toast di errore 
+            TempData["ErrorTitle"] = "Signup failed";
+            TempData["ErrorMessage"] = "Error, something went wrong...";
 
             // Se arrivi qui, qualcosa non ha funzionato
             return View(vm);

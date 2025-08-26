@@ -19,7 +19,7 @@ namespace Hospital.Models.Nurse
         public string Phone { get; set; }
 
         [Display(Name = "Department")]
-        public string Department { get; set; }
+        public Department? Department { get; set; }
 
         [Display(Name = "Is Primary Nurse?")] // Traduzione da migliorare
         public bool Admin { get; set; }
