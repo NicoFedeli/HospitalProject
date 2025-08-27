@@ -129,14 +129,6 @@
                                 <span asp-validation-for="Nurse.Phone" class="text-danger"></span>
                             </div>
 
-                            @* <div class="form-group">
-                                <label asp-for="Nurse.Department">
-                                    <span class="fas fa-hospital-user mr-1"></span> @Html.DisplayNameFor(m => m.Nurse.Department)
-                                </label>
-                                <input asp-for="Nurse.Department" class="form-control">
-                                <span asp-validation-for="Nurse.Department" class="text-danger"></span>
-                            </div> *@
-
                             <div class="form-group">
                                 <label asp-for="Nurse.Department"></label>
                                 <select asp-for="Nurse.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
@@ -165,13 +157,6 @@
                                 <span asp-validation-for="Doctor.Phone" class="text-danger"></span>
                             </div>
 
-                            @* <div class="form-group">
-                                <label asp-for="Doctor.Department">
-                                    <span class="fas fa-hospital-user mr-1"></span> @Html.DisplayNameFor(m => m.Doctor.Department)
-                                </label>
-                                <input asp-for="Doctor.Department" class="form-control">
-                                <span asp-validation-for="Doctor.Department" class="text-danger"></span>
-                            </div> *@
                             <div class="form-group">
                                 <label asp-for="Doctor.Department"></label>
                                 <select asp-for="Doctor.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
@@ -188,13 +173,6 @@
                                 <span asp-validation-for="Doctor.Admin" class="text-danger"></span>
                             </div>
 
-                            @* <div class="form-group">
-                                <label asp-for="Doctor.Speciality">
-                                    <span class="fas fa-stethoscope mr-1"></span> @Html.DisplayNameFor(m => m.Doctor.Speciality)
-                                </label>
-                                <input asp-for="Doctor.Speciality" class="form-control">
-                                <span asp-validation-for="Doctor.Speciality" class="text-danger"></span>
-                            </div> *@
                             <div class="form-group">
                                 <label asp-for="Doctor.Speciality"></label>
                                 <select asp-for="Doctor.Speciality" class="form-control" asp-items="Html.GetEnumSelectList<Speciality>()">
@@ -228,23 +206,6 @@
 
             </form>
         </div>
-
-        @* <div class="row">
-            <div class="col-8">
-                <div class="icheck-primary">
-                    <input type="checkbox" id="agreeTerms" name="terms" value="agree">
-                    <label for="agreeTerms">
-                        I agree to the <a href="#">terms</a>
-                    </label>
-                </div>
-            </div>
-            <!-- /.col -->
-            <div class="col-4">
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
-            </div>
-            <!-- /.col -->
-        </div> *@
-
     <a asp-action="Login" class="text-center">I already have a membership</a>
 </div>
 

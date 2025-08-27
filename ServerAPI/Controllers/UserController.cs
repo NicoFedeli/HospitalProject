@@ -1003,6 +1003,16 @@ namespace HospitalAPI.Controllers
 
         }
 
+        // ✅ POST: /api/User/Logout
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            // Cancella tutti i dati della sessione
+            HttpContext.Session.Clear();
+
+            return Ok(new { Status = "OK", Message = "Logged out successfully" });
+        }
+
         private IActionResult SearchUser(string username, string password, HospitalDbContext context)
         {
             var doctor = context.doctors.FirstOrDefault(x => x.Username == username && x.Password == password);
@@ -1019,19 +1029,31 @@ namespace HospitalAPI.Controllers
                             Message = "Invalid username or password."
                         });
                     else
+                        // Salvo i dati in sessione
+                        HttpContext.Session.SetString("UserId", patient.ID.ToString());
+                        HttpContext.Session.SetString("Username", patient.Username);
+                        HttpContext.Session.SetString("Role", "Patient");
+                        
                         return Ok(new LoginResponse()
                         {
+
                             Status = "OK",
                             Message = $"{username} logged succesfully as patient",
                             Data = new LoginResponseData {
                                 Id = patient.ID,
                                 Username = patient.Username,
-                                Role = "Patient",
-                                Token = null
+                                Role = "Patient"
                             }
                         });
                 }
                 else
+                {
+                    // Salvo i dati in sessione
+                    HttpContext.Session.SetString("UserId", nurse.ID.ToString());
+                    HttpContext.Session.SetString("Username", nurse.Username);
+                    HttpContext.Session.SetString("Role", "Nurse");
+                    HttpContext.Session.SetString("Admin", nurse.Admin.ToString());
+
                     return Ok(new LoginResponse()
                     {
                         Status = "OK",
@@ -1040,12 +1062,19 @@ namespace HospitalAPI.Controllers
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "Nurse",
-                            Admin = nurse.Admin.ToString(),
-                            Token = null
+                            Admin = nurse.Admin
                         }
                     });
+                }
             }
             else
+            {
+                // Salvo i dati in sessione
+                HttpContext.Session.SetString("UserId", doctor.ID.ToString());
+                HttpContext.Session.SetString("Username", doctor.Username);
+                HttpContext.Session.SetString("Role", "Doctor");
+                HttpContext.Session.SetString("Admin", doctor.Admin.ToString());
+
                 return Ok(new LoginResponse()
                 {
                     Status = "OK",
@@ -1053,11 +1082,11 @@ namespace HospitalAPI.Controllers
                     Data = new LoginResponseData {
                         Id = doctor.ID,
                         Username = doctor.Username,
-                        Role = "Doctor" ,
-                        Admin = doctor.Admin.ToString(),
-                        Token = null
+                        Role = "Doctor",
+                        Admin = doctor.Admin
                     }
                 });
+            }
         }
 
 

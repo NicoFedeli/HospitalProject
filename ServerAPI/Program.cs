@@ -48,10 +48,22 @@ builder.Services.AddAuthentication("BasicAuthentication")
 
 builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
 
+
+// Sessione
+builder.Services.AddDistributedMemoryCache(); // necessaria per gestire lo storage in memoria
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // durata sessione
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
+
 //--------------------------------
 
 var app = builder.Build();
-app.UseAuthentication();
+app.UseAuthentication(); // abilita l'uso dell'autenticazione
 // Configure the HTTP request pipeline. creao un pagine web per il test delle api
 if (app.Environment.IsDevelopment())
 {
@@ -59,8 +71,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseHttpsRedirection(); // forza l'uso di https
+app.UseSession(); // abilita l'uso della sessione
+app.UseAuthorization(); // abilita l'uso dell'autorizzazione
 
 // Aggiunge la possibilità di creare classi controller
 app.MapControllers();

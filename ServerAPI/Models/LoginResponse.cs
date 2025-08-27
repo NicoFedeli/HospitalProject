@@ -5,8 +5,7 @@
         int Id { get; set; }
         string Username { get; set; }
         string Role { get; set; }
-        string? Admin { get; set; } // SOlO PER DOCTOR e NURSE
-        string? Token { get; set; }
+        bool Admin { get; set; } // SOlO PER DOCTOR e NURSE
     }
 
     public class LoginResponseData : ILoginResponse
@@ -14,8 +13,7 @@
         public int Id { get; set; }
         public string Username { get; set; }
         public string Role { get; set; }
-        public string? Admin { get; set; }
-        public string? Token { get; set; }
+        public bool Admin { get; set; }=false;
     }
 
     public class LoginResponse

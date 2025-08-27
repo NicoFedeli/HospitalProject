@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,14 +21,15 @@ builder.Services.AddHttpClient<IApiHelper, ApiHelper>(client =>
 });
 
 // Cookie auth (login/logout lato MVC)
-//builder.Services
-//    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(o =>
-//    {
-//        o.LoginPath = "/User/Login";
-//        o.LogoutPath = "/User/Logout";
-//        o.AccessDeniedPath = "/User/AccessDenied";
-//    });
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(o =>
+    {
+        o.LoginPath = "/User/LogIn";
+        o.LogoutPath = "/User/LogOut";
+        o.AccessDeniedPath = "/User/AccessDenied";
+        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
 
 var app = builder.Build();
 
@@ -42,9 +44,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-//app.UseAuthentication(); // se usi l'autenticazione
-app.UseAuthorization();
 app.UseSession(); // per usare HttpContext.Session
+app.UseAuthentication(); // Autenticazione
+app.UseAuthorization(); // Autorizzazione
 
 app.MapControllerRoute(
     name: "default",
