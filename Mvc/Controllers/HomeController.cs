@@ -20,6 +20,7 @@ namespace Hospital.Controllers
 
         public IActionResult Privacy()
         {
+
             return View();
         }
 

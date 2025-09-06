@@ -1,0 +1,283 @@
+﻿@model SignUpViewModel
+@{
+	ViewData["Title"] = "Registration";
+	Layout = "~/Views/Shared/_LoginRegisterLayout.cshtml";
+}
+
+<div class="card-body register-card-body">
+    <p class="login-box-msg">Register a new membership</p>
+
+        <div class="bs-stepper">
+            <div class="bs-stepper-header" role="tablist">
+                <div class="step" data-target="#logins-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Common Data</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#information-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">More Info</span>
+                    </button>
+                </div>
+            </div>
+
+            <form asp-action="SignUp" method="post" id="signupForm">
+                @Html.AntiForgeryToken()
+                @* Prima Parte *@
+                <div class="bs-stepper-content">
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                    
+                        <div class="form-group">
+                            <label asp-for="Common.Name">
+							    <span class="fas fa-user mr-1"></span> @Html.DisplayNameFor(m => m.Common.Name)
+						    </label>
+                            <input asp-for="Common.Name" class="form-control" placeholder="First Name">
+                            <span asp-validation-for="Common.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Common.Surname">
+							    <span class="fas fa-user mr-1"></span> @Html.DisplayNameFor(m => m.Common.Surname)
+                            </label>
+                            <input asp-for="Common.Surname" class="form-control" placeholder="Last Name">
+                            <span asp-validation-for="Common.Surname" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Common.Username">
+							    <span class="fas fa-user-shield mr-1"></span> @Html.DisplayNameFor(m => m.Common.Username)
+                            </label>
+                            <input asp-for="Common.Username" class="form-control" placeholder="User Name">
+                            <span asp-validation-for="Common.Username" class="text-danger"></span>
+
+                        </div>
+                    
+                        <div class="form-group">
+                            <label asp-for="Common.Password">
+							    <span class="fas fa-lock mr-1 "></span> @Html.DisplayNameFor(m => m.Common.Password)
+						    </label>
+                            <input asp-for="Common.Password" class="form-control" placeholder="Password">
+                            <span asp-validation-for="Common.Password" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Common.ConfirmPassword">
+							    <span class="fas fa-lock mr-1"></span> @Html.DisplayNameFor(m => m.Common.ConfirmPassword)
+                            </label>
+                            <input asp-for="Common.ConfirmPassword" class="form-control" placeholder="Retype Password">
+                            <span asp-validation-for="Common.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Common.Role">
+							    <span class="fas fa-list mr-1"></span> @Html.DisplayNameFor(m => m.Common.Role)
+                                </label>
+                            <select asp-for="Common.Role" class="form-control" id="roleSelect">
+                                <option value="Patient">Patient</option>
+                                <option value="Nurse">Nurse</option>
+                                <option value="Doctor">Doctor</option>
+                            </select>
+                            <span asp-validation-for="Common.Role" class="text-danger"></span>
+                        </div>
+
+                        <button class="btn btn-primary" id="toStep2" onclick="stepper.next()">Next</button>
+                    </div>
+
+                    @* Seconda Parte *@
+                    <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+					    <!-- Paziente -->
+                        <div class="role-pane" data-role="Patient">
+                            
+                            <div class="form-group">
+                                <label asp-for="Patient.Age">
+                                    <span class="fas fa-birthday-cake mr-1"></span> @Html.DisplayNameFor(m => m.Patient.Age)
+                                </label>
+                                <input asp-for="Patient.Age" class="form-control">
+                                <span asp-validation-for="Patient.Age" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Patient.Phone">
+                                    <span class="fas fa-phone mr-1"></span> @Html.DisplayNameFor(m => m.Patient.Phone)
+                                </label>
+                                <input asp-for="Patient.Phone" class="form-control">
+                                <span asp-validation-for="Patient.Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                            <label asp-for="Patient.Address">
+                                <span class="fas fa-map mr-1"></span> @Html.DisplayNameFor(m => m.Patient.Address)
+                                </label>
+                            <input asp-for="Patient.Address" class="form-control">
+                            <span asp-validation-for="Patient.Address" class="text-danger"></span>
+                            </div>
+                        </div>
+					
+                        <!-- Infermiere -->
+					    <div class="role-pane" data-role="Nurse">
+
+                            <div class="form-group">
+                                <label asp-for="Nurse.Phone">
+                                    <span class="fas fa-phone mr-1"></span> @Html.DisplayNameFor(m => m.Nurse.Phone)
+                                </label>
+                                <input asp-for="Nurse.Phone" class="form-control">
+                                <span asp-validation-for="Nurse.Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Nurse.Department"></label>
+                                <select asp-for="Nurse.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                    <option value="">Select Department</option>
+                                </select>
+                                <span asp-validation-for="Nurse.Department" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <input asp-for="Nurse.Admin" class="form-check-input" type="checkbox" id="nurseAdminCheck">
+                                <label asp-for="Nurse.Admin">
+								    @Html.DisplayNameFor(m => m.Nurse.Admin) <span class="fas fa-user-shield mr-1"></span>
+							    </label>
+                                <span asp-validation-for="Nurse.Admin" class="text-danger"></span>
+                            </div>
+					    </div>
+
+					    <!-- Medico -->
+					    <div class="role-pane" data-role="Doctor">
+
+                            <div class="form-group">
+                                <label asp-for="Doctor.Phone">
+                                    <span class="fas fa-phone mr-1"></span> @Html.DisplayNameFor(m => m.Doctor.Phone)
+                                </label>
+                                <input asp-for="Doctor.Phone" class="form-control">
+                                <span asp-validation-for="Doctor.Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Doctor.Department"></label>
+                                <select asp-for="Doctor.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                    <option value="">Select Department</option>
+                                </select>
+                                <span asp-validation-for="Doctor.Department" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <input asp-for="Doctor.Admin" class="form-check-input" type="checkbox" id="doctorAdminCheck">
+                                <label asp-for="Doctor.Admin">
+								    @Html.DisplayNameFor(m => m.Doctor.Admin) <span class="fas fa-user-shield mr-1"></span>
+							    </label>
+                                <span asp-validation-for="Doctor.Admin" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Doctor.Speciality"></label>
+                                <select asp-for="Doctor.Speciality" class="form-control" asp-items="Html.GetEnumSelectList<Speciality>()">
+                                    <option value="">Select Speciality</option>
+                                </select>
+                                <span asp-validation-for="Doctor.Speciality" class="text-danger"></span>
+                            </div>
+	
+					    </div>
+
+
+                        @* Parte Finale *@
+                        <div class="row">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+                                <label for="agreeTerms">
+                                    I agree to the <a href="#">terms</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+						<div class="col-12 gap-5 justify-content-center ">
+                                <button class="btn btn-primary mr-2" id="backTo1" onclick="stepper.previous()">Previous</button>
+                                <button type="submit" class="btn btn-success ml-2">Create Account</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    <a asp-action="Login" class="text-center">I already have a membership</a>
+</div>
+
+<!-- BS-Stepper -->
+<script src="../../plugins/bs-stepper/js/bs-stepper.min.js"></script>
+  
+
+<!-- /.form-box -->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let stepper;
+
+        $(document).ready(function () {
+            // Inizializza stepper una sola volta
+            stepper = new Stepper($('.bs-stepper')[0]);
+
+            function syncRoleUI() {
+                var role = $('#roleSelect').val();
+                // Nascondi e disabilita tutti
+                $('.role-pane').addClass('d-none').find(':input').prop('disabled', true);
+                // Mostra e abilita solo quello del ruolo
+                var $pane = $('.role-pane[data-role="' + role + '"]');
+                $pane.removeClass('d-none').find(':input').prop('disabled', false);
+            }
+
+            // Aggancio evento cambio ruolo
+            $('#roleSelect').on('change', syncRoleUI);
+            syncRoleUI(); // al load
+
+            // Avanti con validazione
+            // $('#toStep2').on('click', function (e) {
+            //     e.preventDefault(); // blocca submit
+            //     if ($('#signupForm').valid()) {
+            //         // Mantengo i dati readonly
+            //         $('#logins-part').prop('readonly', true);
+            //         // Abilita i campi step 2
+            //         $('#information-part').prop('readonly', false);
+
+            //         stepper.next();
+            //     }
+            // });
+            $('#toStep2').on('click', function (e) {
+                e.preventDefault();
+
+                // Controllo campi opzionali di Step 1
+                let optionalFields = ["#Common_Username","#Common_Name","#Common_Surname","#Common_Password","#Common_ConfirmPassword"];
+                let hasEmptyOptional = optionalFields.some(id => $(id).val().trim() === "");
+
+                if (hasEmptyOptional) {
+                    toastr.warning(
+                        "Some optional fields in Step 1 are empty. You can continue, but we recommend completing them.", 
+                        "Missing information"
+                    );
+                }
+
+                // Se arrivo qui: valido → posso andare avanti
+                $('#logins-part').prop('readonly', true);
+                $('#information-part').prop('readonly', false);
+                stepper.next();
+            });
+
+
+            $('#backTo1').on('click', function (e) {
+                e.preventDefault();
+                $('#logins-part').prop('readonly', false);
+                $('#information-part').prop('readonly', true);
+                stepper.previous();
+            });
+        });
+    </script>
+}

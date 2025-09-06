@@ -44,19 +44,27 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet("Login", Name = "Login")]
+        [AllowAnonymous]
+        [HttpPost("Login", Name = "Login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
-        public IActionResult Get(string username, string password)
+        public IActionResult Login(LoginModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetResponse()
+                {
+                    Status = "KO",
+                    Message = "Data not valid"
+                });
+            }
             try
             {
                 using (var context = new HospitalDbContext())
                 {
                     try
                     {
-                        return SearchUser(username, password, context);
+                        return SearchUser(model.Username, model.Password, context);
                     }
                     catch (Exception ex)
                     {
@@ -244,7 +252,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddDoctor", Name = "AddDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
@@ -586,7 +594,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddNurse", Name = "AddNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
@@ -817,7 +825,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("AddPatient", Name = "AddPatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePostCreateUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponsePostCreateUser))]
@@ -995,6 +1003,16 @@ namespace HospitalAPI.Controllers
 
         }
 
+        // ✅ POST: /api/User/Logout
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            // Cancella tutti i dati della sessione
+            HttpContext.Session.Clear();
+
+            return Ok(new { Status = "OK", Message = "Logged out successfully" });
+        }
+
         private IActionResult SearchUser(string username, string password, HospitalDbContext context)
         {
             var doctor = context.doctors.FirstOrDefault(x => x.Username == username && x.Password == password);
@@ -1008,28 +1026,67 @@ namespace HospitalAPI.Controllers
                         return BadRequest(new GetResponse()
                         {
                             Status = "KO",
-                            Message = $"{username} not found in DB"
+                            Message = "Invalid username or password."
                         });
                     else
-                        return Ok(new GetResponse()
+                        // Salvo i dati in sessione
+                        HttpContext.Session.SetString("UserId", patient.ID.ToString());
+                        HttpContext.Session.SetString("Username", patient.Username);
+                        HttpContext.Session.SetString("Role", "Patient");
+                        
+                        return Ok(new LoginResponse()
                         {
+
                             Status = "OK",
-                            Message = $"{username} logged succesfully as patient"
+                            Message = $"{username} logged succesfully as patient",
+                            Data = new LoginResponseData {
+                                Id = patient.ID,
+                                Username = patient.Username,
+                                Role = "Patient"
+                            }
                         });
                 }
                 else
-                    return Ok(new GetResponse()
+                {
+                    // Salvo i dati in sessione
+                    HttpContext.Session.SetString("UserId", nurse.ID.ToString());
+                    HttpContext.Session.SetString("Username", nurse.Username);
+                    HttpContext.Session.SetString("Role", "Nurse");
+                    HttpContext.Session.SetString("Admin", nurse.Admin.ToString());
+
+                    return Ok(new LoginResponse()
                     {
                         Status = "OK",
-                        Message = $"{username} logged succesfully as nurse"
+                        Message = $"{username} logged succesfully as nurse",
+                        Data = new LoginResponseData {
+                            Id = nurse.ID,
+                            Username = nurse.Username,
+                            Role = "Nurse",
+                            Admin = nurse.Admin
+                        }
                     });
+                }
             }
             else
-                return Ok(new GetResponse()
+            {
+                // Salvo i dati in sessione
+                HttpContext.Session.SetString("UserId", doctor.ID.ToString());
+                HttpContext.Session.SetString("Username", doctor.Username);
+                HttpContext.Session.SetString("Role", "Doctor");
+                HttpContext.Session.SetString("Admin", doctor.Admin.ToString());
+
+                return Ok(new LoginResponse()
                 {
                     Status = "OK",
-                    Message = $"{username} logged succesfully as doctor"
+                    Message = $"{username} logged succesfully as doctor",
+                    Data = new LoginResponseData {
+                        Id = doctor.ID,
+                        Username = doctor.Username,
+                        Role = "Doctor",
+                        Admin = doctor.Admin
+                    }
                 });
+            }
         }
 
 

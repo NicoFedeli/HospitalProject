@@ -1,0 +1,25 @@
+﻿namespace HospitalAPI.Models
+{
+    public interface ILoginResponse
+    { 
+        int Id { get; set; }
+        string Username { get; set; }
+        string Role { get; set; }
+        bool Admin { get; set; } // SOlO PER DOCTOR e NURSE
+    }
+
+    public class LoginResponseData : ILoginResponse
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Role { get; set; }
+        public bool Admin { get; set; }=false;
+    }
+
+    public class LoginResponse
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public ILoginResponse Data { get; set; }
+    }
+}

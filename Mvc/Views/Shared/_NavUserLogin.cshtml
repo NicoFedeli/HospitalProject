@@ -1,0 +1,25 @@
+﻿
+@* VSCEGLI LA CONDIZIONE DA INSERIRE: SESSION O COOKIE *@
+@if (Context.User.Identity?.Name != null)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li class="nav-link">
+            Hello @Context.User.Identity.Name!
+        </li>
+        @* Forma Raccomandata per una POST *@
+        <li>
+            <form asp-controller="User" asp-action="LogOut" method="post" class="d-inline">
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log Out</button>
+                @Html.AntiForgeryToken()
+            </form>
+        </li>
+
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li><a class="nav-link text-lightblue hover text-light" asp-controller="User" asp-action="SignUp">Register</a></li>
+        <li><a class="nav-link text-lightblue hover text-light" asp-controller="User" asp-action="Login">Login</a></li>
+    </ul>
+}
