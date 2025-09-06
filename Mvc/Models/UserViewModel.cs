@@ -7,5 +7,6 @@
         public string Username { get; set; }       // Nome utente
         public string Email { get; set; }          // Email (opzionale, utile più avanti)
         public string Role { get; set; }           // Ruolo (es: "doctor", "patient", "admin")
+        public bool Admin { get; set; }          // Indica se l'utente è un admin.
     }
 }

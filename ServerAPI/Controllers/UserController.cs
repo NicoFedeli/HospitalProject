@@ -1033,6 +1033,7 @@ namespace HospitalAPI.Controllers
                         HttpContext.Session.SetString("UserId", patient.ID.ToString());
                         HttpContext.Session.SetString("Username", patient.Username);
                         HttpContext.Session.SetString("Role", "Patient");
+                        HttpContext.Session.SetString("Admin", "false");
                         
                         return Ok(new LoginResponse()
                         {
@@ -1042,7 +1043,8 @@ namespace HospitalAPI.Controllers
                             Data = new LoginResponseData {
                                 Id = patient.ID,
                                 Username = patient.Username,
-                                Role = "Patient"
+                                Role = "Patient",
+                                Admin = false
                             }
                         });
                 }

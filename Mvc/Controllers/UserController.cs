@@ -44,7 +44,8 @@ namespace Hospital.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, response.Data.Id.ToString()),
                     new Claim(ClaimTypes.Name, response.Data.Username),
-                    new Claim(ClaimTypes.Role, response.Data.Role) // es: Doctor, Nurse, Patient
+                    new Claim(ClaimTypes.Role, response.Data.Role), // es: Doctor, Nurse, Patient
+                    new Claim("IsAdmin", response.Data.Admin.ToString().ToLower()) // custom claim per sapere se è admin: true/false     
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
