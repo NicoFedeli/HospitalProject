@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using HospitalAPI.Models;
+using HospitalAPI.Repository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
@@ -47,20 +49,78 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         var username = credentials[0];
         var password = credentials[1];
 
-        //controllare sul db se l'utente è abilitato
 
-        //if (username != "test@fake.com" && password != "subscribe")
-        //{
-        //    return AuthenticateResult.Fail("Authentication failed");
-        //}
-
-
-        var claims = new[]
+        using (var context = new HospitalDbContext())
         {
-            new Claim(ClaimTypes.NameIdentifier, username)
-        };
-        var identity = new ClaimsIdentity(claims, "Basic");
-        var claimsPrincipal = new ClaimsPrincipal(identity);
-        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
+            var claims = new Claim[] { };
+            try
+            {
+                var doctor = context.doctors.FirstOrDefault(x => x.Username == username && x.Password == password);
+                if (doctor == null)
+                {
+                    var nurse = context.nurses.FirstOrDefault(x => x.Username == username && x.Password == password);
+                    if (nurse == null)
+                    {
+                        var patient = context.patients.FirstOrDefault(x => x.Username == username && x.Password == password);
+                        if (patient == null)
+                            return AuthenticateResult.Fail("Unauthorized");
+                        else
+                        {
+                            claims = new[]
+                            {
+                                new Claim(ClaimTypes.NameIdentifier, username),
+                                new Claim(ClaimTypes.Role, "Patient")
+                            };
+                        }
+                    }
+                    else if (nurse.Admin)
+                    {
+                        claims = new[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, username),
+                            new Claim(ClaimTypes.Role, "NurseAdmin")
+                        };
+                    }
+                    else
+                    {
+                        claims = new[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, username),
+                            new Claim(ClaimTypes.Role, "Nurse")
+                        };
+                    }
+                }
+                else if (doctor.Admin)
+                {
+                    claims = new[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, username),
+                        new Claim(ClaimTypes.Role, "DoctorAdmin")
+                    };
+                }
+                else
+                {
+                    claims = new[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, username),
+                        new Claim(ClaimTypes.Role, "Doctor")
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+
+
+
+            var identity = new ClaimsIdentity(claims, "Basic");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
+        }
     }
+
 }

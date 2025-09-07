@@ -16,7 +16,7 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        //SOLO TEST
         [HttpGet("GetAllAppointments", Name = "GetAllAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -69,7 +69,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPost("CreateAppointment", Name = "CreateAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -121,7 +121,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetAllPatientAppointments", Name = "GetAllPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -173,7 +173,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetFuturePatientAppointments", Name = "GetFuturePatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -226,7 +226,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetPastPatientAppointments", Name = "GetPastPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -278,7 +278,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentAppointments", Name = "GetAllDepartmentAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -347,7 +347,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDoctorAppointments", Name = "GetAllDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -400,7 +400,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetFutureDoctorAppointments", Name = "GetFutureDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -453,7 +453,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetPastDoctorAppointments", Name = "GetPastDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -505,7 +505,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPut("ModifyAppointment", Name = "ModifyApointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -563,7 +563,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpDelete("DeleteAppointment", Name = "DeleteAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
