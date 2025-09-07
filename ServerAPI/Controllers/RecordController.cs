@@ -18,7 +18,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles ="DoctorAdmin,NurseAdmin,Doctor")]
         [HttpGet("GetAllPatientRecords", Name = "GetAllPatientRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -70,7 +70,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpGet("GetAllDoctorRecords", Name = "GetAllDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -123,7 +123,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentDoctorRecords", Name = "GetAllDepartmentDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -193,7 +193,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpGet("GetAllNurseRecords", Name = "GetAllNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -245,7 +245,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor,Nurse")]
         [HttpGet("GetAllDepartmentNurseRecords", Name = "GetAllDepartmentNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -315,7 +315,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpPost("CreateRecord", Name = "CreateRecord")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -360,7 +360,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpPut("ModifyRecords", Name = "ModifyRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]

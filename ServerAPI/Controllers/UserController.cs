@@ -22,14 +22,14 @@ namespace HospitalAPI.Controllers
         }
 
         [HttpPost]
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(int id,string username,string role)
         {
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-
+        
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("RDF"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -90,7 +90,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        //SOLO FASE TEST
         [HttpGet("GetAllDoctors", Name = "GetAllDoctors")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -143,7 +143,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentDoctors", Name = "GetAllDepartmentDoctors")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -197,7 +197,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentNurseFromDoctor", Name = "GetAllDepartmentNurseFromDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -313,7 +313,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpPut("ModifyDoctor", Name = "ModifyDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -376,7 +376,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpDelete("DeleteDoctor", Name = "DeleteDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -431,7 +431,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-
+        //SOLO TEST
         [Authorize]
         [HttpGet("GetAllNurses", Name = "GetAllNurses")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
@@ -484,7 +484,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentNurses", Name = "GetAllDepartmentNurses")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -539,7 +539,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentDoctorsFromNurse", Name = "GetAllDepartmentDoctorsFromNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -655,7 +655,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin")]
         [HttpPut("ModifyNurse", Name = "ModifyNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -717,7 +717,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin")]
         [HttpDelete("DeleteNurse", Name = "DeleteNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -772,7 +772,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllPatients", Name = "GetAllPatients")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatientResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -886,7 +886,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpPut("ModifyPatient", Name = "ModifyPatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -948,7 +948,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpDelete("DeletePatient", Name = "DeletePatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -1004,11 +1004,11 @@ namespace HospitalAPI.Controllers
         }
 
         // ✅ POST: /api/User/Logout
+        [Authorize]
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
-            // Cancella tutti i dati della sessione
-            HttpContext.Session.Clear();
+            //Token Expired
 
             return Ok(new { Status = "OK", Message = "Logged out successfully" });
         }
@@ -1029,36 +1029,42 @@ namespace HospitalAPI.Controllers
                             Message = "Invalid username or password."
                         });
                     else
-                        // Salvo i dati in sessione
-                        HttpContext.Session.SetString("UserId", patient.ID.ToString());
-                        HttpContext.Session.SetString("Username", patient.Username);
-                        HttpContext.Session.SetString("Role", "Patient");
-                        
-                        return Ok(new LoginResponse()
+                    return Ok(new LoginResponse()
+                    {
+
+                        Status = "OK",
+                        Message = $"{username} logged succesfully as patient",
+                        Data = new LoginResponseData
                         {
-
-                            Status = "OK",
-                            Message = $"{username} logged succesfully as patient",
-                            Data = new LoginResponseData {
-                                Id = patient.ID,
-                                Username = patient.Username,
-                                Role = "Patient"
-                            }
-                        });
+                            Id = patient.ID,
+                            Username = patient.Username,
+                            Role = "Patient"
+                        }
+                    });
                 }
-                else
+                else if (nurse.Admin)
                 {
-                    // Salvo i dati in sessione
-                    HttpContext.Session.SetString("UserId", nurse.ID.ToString());
-                    HttpContext.Session.SetString("Username", nurse.Username);
-                    HttpContext.Session.SetString("Role", "Nurse");
-                    HttpContext.Session.SetString("Admin", nurse.Admin.ToString());
-
                     return Ok(new LoginResponse()
                     {
                         Status = "OK",
                         Message = $"{username} logged succesfully as nurse",
-                        Data = new LoginResponseData {
+                        Data = new LoginResponseData
+                        {
+                            Id = nurse.ID,
+                            Username = nurse.Username,
+                            Role = "AdminNurse",
+                            Admin = nurse.Admin
+                        }
+                    });
+                }
+                else
+                {
+                    return Ok(new LoginResponse()
+                    {
+                        Status = "OK",
+                        Message = $"{username} logged succesfully as nurse",
+                        Data = new LoginResponseData
+                        {
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "Nurse",
@@ -1067,14 +1073,23 @@ namespace HospitalAPI.Controllers
                     });
                 }
             }
+            else if (doctor.Admin)
+            {
+                return Ok(new LoginResponse()
+                {
+                    Status = "OK",
+                    Message = $"{username} logged succesfully as doctor",
+                    Data = new LoginResponseData
+                    {
+                        Id = doctor.ID,
+                        Username = doctor.Username,
+                        Role = "AdminDoctor",
+                        Admin = doctor.Admin
+                    }
+                });
+            }
             else
             {
-                // Salvo i dati in sessione
-                HttpContext.Session.SetString("UserId", doctor.ID.ToString());
-                HttpContext.Session.SetString("Username", doctor.Username);
-                HttpContext.Session.SetString("Role", "Doctor");
-                HttpContext.Session.SetString("Admin", doctor.Admin.ToString());
-
                 return Ok(new LoginResponse()
                 {
                     Status = "OK",

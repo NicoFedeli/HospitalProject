@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 //RDF NEW
 builder.Services.AddSwaggerGen(c =>
@@ -41,38 +42,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddScoped<UserService>();
-//IMPORTANTE  BasicAuthenticationHandler
-builder.Services.AddAuthentication("BasicAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
-builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformationService>();
-
-
-// Sessione
-builder.Services.AddDistributedMemoryCache(); // necessaria per gestire lo storage in memoria
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // durata sessione
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-
-
-//--------------------------------
-
 var app = builder.Build();
-app.UseAuthentication(); // abilita l'uso dell'autenticazione
+
 // Configure the HTTP request pipeline. creao un pagine web per il test delle api
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection(); // forza l'uso di https
-app.UseSession(); // abilita l'uso della sessione
 app.UseAuthorization(); // abilita l'uso dell'autorizzazione
 
 // Aggiunge la possibilità di creare classi controller
