@@ -1030,7 +1030,6 @@ namespace HospitalAPI.Controllers
             }
 
         }
-
         
         private IActionResult SearchUser(string username, string password, HospitalDbContext context)
         {

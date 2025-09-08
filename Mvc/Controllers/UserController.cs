@@ -44,7 +44,8 @@ namespace Hospital.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, response.Data.Id.ToString()),
                     new Claim(ClaimTypes.Name, response.Data.Username),
-                    new Claim(ClaimTypes.Role, response.Data.Role) // es: Doctor, Nurse, Patient
+                    new Claim(ClaimTypes.Role, response.Data.Role), // es: Doctor, Nurse, Patient
+                    //new Claim("Token", response.Data.Token)) // custom claim per il token  . DEVO FARLO COSì????? 
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -217,14 +218,10 @@ namespace Hospital.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut()
         {
-            // 1. Logout lato ServerApi
-            await _api.PostAsync<object>("api/User/Logout", null);
-
-            // 2. Logout lato MVC (cookie di autenticazione)
+            // Logout solo lato client: tolgo la cookie di autenticazione
+            // Il token non arriva mai al backend, quindi non c'è logout lato server fino a che non scade
+            // Logout lato MVC (cookie di autenticazione)
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            //// 3. Pulisci sessione TempData / toastr
-            //HttpContext.Session.Clear();
 
             TempData["SuccessTitle"] = "Bye Bye!";
             TempData["SuccessMessage"] = "Successfully logged out";
