@@ -4,7 +4,15 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(); // lascio questo per il momento. Appena ho i cookie auth lo elimino
+//builder.Services.AddControllersWithViews(options =>
+//{
+//    // Tutti i controller richiedono autenticazione di default, rende [Authorize] implicito in tutti i controller
+//    // Nelle View di Login e SignUp uso [AllowAnonymous] per permettere l'accesso anonimo
+//    // In questo modo uno non loggato viene reindirizzato alla pagina di login
+//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+//});
+
 builder.Services.AddHttpContextAccessor(); // Per iniettare IHttpContextAccessor in UI/_ToastScripts
 builder.Services.AddDistributedMemoryCache(); // Memoria temporanea per sessione
 builder.Services.AddSession(options =>

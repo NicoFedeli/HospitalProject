@@ -1,0 +1,143 @@
+﻿@{
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var isAdmin = bool.TryParse(User.FindFirst("IsAdmin")?.Value, out var adminFlag) && adminFlag;
+	Console.WriteLine($"Role: {role}, IsAdmin: {isAdmin}");
+}
+
+<!-- Doctor -->
+@if (role == "Doctor" || role == "DoctorAdmin")
+{
+    @* menu-open mostra la tendina aperta  *@
+    <li class="nav-item menu-open">
+        @* active lo lascia bianco *@
+        <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-user-md"></i>
+            <p>
+                Doctor
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a asp-controller="Doctor" asp-action="Create" class="nav-link">
+                    <i class="far fa-plus nav-icon"></i>
+                    <p>Create new Doctor</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Doctor" asp-action="Edit" class="nav-link">
+                    <i class="far fa-edit nav-icon"></i>
+                    <p>Edit one Doctor</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Doctor" asp-action="Delete" class="nav-link">
+                    <i class="far fa-cross nav-icon"></i>
+                    <p>Delete one Doctor</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+}
+
+<!-- Nurse -->
+@if (role == "Doctor" || role == "DoctorAdmin" || role == "Nurse" || role == "NurseAdmin")
+{
+    <li class="nav-item menu-open">
+        <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-user-nurse"></i>
+            <p>
+                Nurse
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a asp-controller="Nurse" asp-action="Create" class="nav-link">
+                    <i class="far fa-plus nav-icon"></i>
+                    <p>Create new Nurse</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Nurse" asp-action="Edit" class="nav-link">
+                    <i class="far fa-edit nav-icon"></i>
+                    <p>Edit one Nurse</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Nurse" asp-action="Delete" class="nav-link">
+                    <i class="far fa-cross nav-icon"></i>
+                    <p>Delete one Nurse</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+}
+
+
+@if (role == "Doctor" || role == "DoctorAdmin")
+{
+    
+    @* Patient  *@
+    <li class="nav-item menu-open">
+        <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+                Patient
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a asp-controller="Patient" asp-action="Create" class="nav-link">
+                    <i class="far fa-plus nav-icon"></i>
+                    <p>Create new Patient</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Patient" asp-action="Edit" class="nav-link">
+                    <i class="far fa-edit nav-icon"></i>
+                    <p>Edit one Patient</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Patient" asp-action="Delete" class="nav-link">
+                    <i class="far fa-cross nav-icon"></i>
+                    <p>Delete one Patient</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    @* Appointement *@
+    <li class="nav-item menu-open">
+        <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+                Appointment
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a asp-controller="Appointment" asp-action="Create" class="nav-link">
+                    <i class="far fa-plus nav-icon"></i>
+                    <p>Create new Patient</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Appointment" asp-action="Edit" class="nav-link">
+                    <i class="far fa-edit nav-icon"></i>
+                    <p>Edit one Patient</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Appointment" asp-action="Delete" class="nav-link">
+                    <i class="far fa-cross nav-icon"></i>
+                    <p>Delete one Patient</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+}

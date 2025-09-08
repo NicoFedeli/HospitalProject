@@ -1005,6 +1005,7 @@ namespace HospitalAPI.Controllers
 
         // ✅ POST: /api/User/Logout
         [HttpPost("Logout")]
+        [Authorize]
         public IActionResult Logout()
         {
             // Cancella tutti i dati della sessione
