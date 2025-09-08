@@ -1,31 +1,55 @@
-using DemoApi.Auth;
 using HospitalAPI;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Aggiunge la possibilità di creare classi controller
-
+// Controllers
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddAuthentication("BasicAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+// ?? Configura autenticazione con JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
 
-//RDF NEW
+        ValidIssuer = "IssuerServer", // deve matchare con quello del tuo GenerateJwtToken
+        ValidAudience = "AudienceServer",
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes("una-super-chiave-lunghissima-e-segreta-123456789"))
+    };
+});
+
+// Autorizzazioni
+builder.Services.AddAuthorization();
+
+// ?? Swagger con supporto JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "basic",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Basic Authorization header."
+        Description = "Inserisci 'Bearer {il tuo token JWT}'"
     });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -34,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "basic"
+                    Id = "Bearer"
                 }
             },
             new string[] {}
@@ -44,16 +68,16 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline. creao un pagine web per il test delle api
-
+// Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseHttpsRedirection();
 
-app.UseHttpsRedirection(); // forza l'uso di https
-app.UseAuthorization(); // abilita l'uso dell'autorizzazione
+// ? Importante: Authentication PRIMA di Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
-// Aggiunge la possibilità di creare classi controller
 app.MapControllers();
 
 app.Run();

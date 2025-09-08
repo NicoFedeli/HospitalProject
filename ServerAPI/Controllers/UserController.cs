@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Numerics;
 using System.Security.Claims;
 using System.Text;
 
@@ -26,18 +27,20 @@ namespace HospitalAPI.Controllers
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
             };
         
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("RDF"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("una-super-chiave-lunghissima-e-segreta-123456789"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
               issuer: "IssuerServer",
               audience: "AudienceServer",
               claims: claims,
-              expires: DateTime.UtcNow,
+              expires: DateTime.UtcNow.AddMinutes(30),
               signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -333,6 +336,14 @@ namespace HospitalAPI.Controllers
                                 Message = $"No nurse found with id {doctor.ID}"
                             });
 
+                        var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = doctor.Username,
+                                Message = $"{doctor.Username} already exists in our database"
+                            });
                         oldDoctor.Name = doctor.Name;
                         oldDoctor.Surname = doctor.Surname;
                         oldDoctor.Username = doctor.Username;
@@ -675,6 +686,15 @@ namespace HospitalAPI.Controllers
                                 Message = $"No nurse found with id {nurse.ID}"
                             });
 
+                        var alreadyExist = UsernameAlreadyExist(context, nurse.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = nurse.Username,
+                                Message = $"{nurse.Username} already exists in our database"
+                            });
+
                         oldNurse.Name = nurse.Name;
                         oldNurse.Surname = nurse.Surname;
                         oldNurse.Username = nurse.Username;
@@ -905,6 +925,14 @@ namespace HospitalAPI.Controllers
                                 Status = "KO",
                                 Message = $"No nurse found with id {patient.ID}"
                             });
+                        var alreadyExist = UsernameAlreadyExist(context, patient.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = patient.Username,
+                                Message = $"{patient.Username} already exists in our database"
+                            });
 
                         oldPatient.Name = patient.Name;
                         oldPatient.Surname = patient.Surname;
@@ -1003,16 +1031,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        // ✅ POST: /api/User/Logout
-        [Authorize]
-        [HttpPost("Logout")]
-        public IActionResult Logout()
-        {
-            //Token Expired
-
-            return Ok(new { Status = "OK", Message = "Logged out successfully" });
-        }
-
+        
         private IActionResult SearchUser(string username, string password, HospitalDbContext context)
         {
             var doctor = context.doctors.FirstOrDefault(x => x.Username == username && x.Password == password);
@@ -1029,21 +1048,26 @@ namespace HospitalAPI.Controllers
                             Message = "Invalid username or password."
                         });
                     else
-                    return Ok(new LoginResponse()
                     {
-
-                        Status = "OK",
-                        Message = $"{username} logged succesfully as patient",
-                        Data = new LoginResponseData
+                        var token = GenerateJwtToken(patient.ID, patient.Username, "Patient");
+                        return Ok(new LoginResponse()
                         {
-                            Id = patient.ID,
-                            Username = patient.Username,
-                            Role = "Patient"
-                        }
-                    });
+
+                            Status = "OK",
+                            Message = $"{username} logged succesfully as patient",
+                            Data = new LoginResponseData
+                            {
+                                Id = patient.ID,
+                                Username = patient.Username,
+                                Role = "Patient",
+                                Token = "Bearer " + token
+                            }
+                        });
+                    }
                 }
                 else if (nurse.Admin)
                 {
+                    var token = GenerateJwtToken(nurse.ID, nurse.Username, "NurseAdmin");
                     return Ok(new LoginResponse()
                     {
                         Status = "OK",
@@ -1053,12 +1077,13 @@ namespace HospitalAPI.Controllers
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "AdminNurse",
-                            Admin = nurse.Admin
+                            Token = "Bearer " + token
                         }
                     });
                 }
                 else
                 {
+                    var token = GenerateJwtToken(nurse.ID, nurse.Username, "Nurse");
                     return Ok(new LoginResponse()
                     {
                         Status = "OK",
@@ -1068,13 +1093,14 @@ namespace HospitalAPI.Controllers
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "Nurse",
-                            Admin = nurse.Admin
+                            Token = "Bearer " + token
                         }
                     });
                 }
             }
             else if (doctor.Admin)
             {
+                var token = GenerateJwtToken(doctor.ID, doctor.Username, "DoctorAdmin");
                 return Ok(new LoginResponse()
                 {
                     Status = "OK",
@@ -1083,13 +1109,14 @@ namespace HospitalAPI.Controllers
                     {
                         Id = doctor.ID,
                         Username = doctor.Username,
-                        Role = "AdminDoctor",
-                        Admin = doctor.Admin
+                        Role = "DoctorAdmin",
+                        Token = "Bearer " + token
                     }
                 });
             }
             else
             {
+                var token = GenerateJwtToken(doctor.ID, doctor.Username, "Doctor");
                 return Ok(new LoginResponse()
                 {
                     Status = "OK",
@@ -1098,7 +1125,7 @@ namespace HospitalAPI.Controllers
                         Id = doctor.ID,
                         Username = doctor.Username,
                         Role = "Doctor",
-                        Admin = doctor.Admin
+                        Token = "Bearer " + token
                     }
                 });
             }
