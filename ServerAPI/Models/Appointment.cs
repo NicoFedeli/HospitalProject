@@ -15,5 +15,9 @@ namespace HospitalAPI.Models
         public int IDDoctor { get; set; }
         [Required]
         public DateTime Date { get; set; }
+        [Required]
+        public string Department { get; set; }
+
+
     }
 }

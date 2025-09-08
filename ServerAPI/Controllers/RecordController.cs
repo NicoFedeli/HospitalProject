@@ -18,7 +18,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles ="DoctorAdmin,NurseAdmin,Doctor")]
+        [Authorize(Roles ="DoctorAdmin,NurseAdmin,Doctor,Nurse,Patient")]
         [HttpGet("GetAllPatientRecords", Name = "GetAllPatientRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -70,7 +70,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "DoctorAdmin")]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDoctorRecords", Name = "GetAllDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -123,7 +123,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "DoctorAdmin,Doctor")]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpGet("GetAllDepartmentDoctorRecords", Name = "GetAllDepartmentDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -193,7 +193,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor,Nurse")]
         [HttpGet("GetAllNurseRecords", Name = "GetAllNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -245,7 +245,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor,Nurse")]
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpGet("GetAllDepartmentNurseRecords", Name = "GetAllDepartmentNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]

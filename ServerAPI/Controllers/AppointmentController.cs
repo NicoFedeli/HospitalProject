@@ -77,17 +77,11 @@ namespace HospitalAPI.Controllers
         {
             try
             {
-                var newAppointment = new Appointment()
-                {
-                    IDPatient = appointment.IDPatient,
-                    IDDoctor = appointment.IDDoctor,
-                    Date = appointment.Date
-                };
                 using (var context = new HospitalDbContext())
                 {
                     try
                     {
-                        context.appointments.Add(newAppointment);
+                        context.appointments.Add(appointment);
                         context.SaveChanges();
                         var response = new GetResponse()
                         {
@@ -278,11 +272,11 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "DoctorAdmin,Doctor")]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentAppointments", Name = "GetAllDepartmentAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
-        public IActionResult GetAllDepartmentAppointments(int doctorId)
+        public IActionResult GetAllDepartmentAppointments(string department)
         {
             try
             {
@@ -290,37 +284,18 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        string? rightDepartment = FindDoctorDepartment(doctorId, context);
-
-                        var appointments = context.appointments.ToList();
-                        if (appointments.Any() && !String.IsNullOrEmpty(rightDepartment))
-                        {
-                            List<Appointment> rightAppointments = new List<Appointment>();
-                            foreach (var item in appointments)
+                        var appointments = context.appointments.Where(x => x.Department == department);
+                        if (appointments.Any())
+                            return Ok(new AppointmentResponse()
                             {
-                                string? department = FindDoctorDepartment(item.IDDoctor, context);
-                                if (department == rightDepartment)
-                                    rightAppointments.Add(item);
-
-                            }
-                            if (rightAppointments.Count > 0)
-                                return Ok(new AppointmentResponse()
-                                {
-                                    Status = "OK",
-                                    Appointments = rightAppointments
-                                });
-                            else
-                                return BadRequest(new GetResponse()
-                                {
-                                    Status = "KO",
-                                    Message = $"No appointments found for department {rightDepartment}"
-                                });
-                        }
+                                Status = "OK",
+                                Appointments = appointments.ToList()
+                            });
                         else
                             return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Message = $"No records found for doctor {doctorId}"
+                                Message = $"No Appointments found for department {department}"
                             });
                     }
                     catch (Exception ex)
@@ -527,6 +502,7 @@ namespace HospitalAPI.Controllers
 
                         oldAppointment.IDPatient = appointment.IDPatient;
                         oldAppointment.IDDoctor = appointment.IDDoctor;
+                        oldAppointment.Department = appointment.Department;
                         oldAppointment.Date = appointment.Date;
 
                         context.SaveChanges();
@@ -616,13 +592,6 @@ namespace HospitalAPI.Controllers
                 });
             }
 
-        }
-
-        private static string? FindDoctorDepartment(int doctorId, HospitalDbContext context)
-        {
-            var doctor = context.doctors.FirstOrDefault(x => x.ID == doctorId);
-            var rightDepartment = doctor?.Department;
-            return rightDepartment;
         }
     }
 }
