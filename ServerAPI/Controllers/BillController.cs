@@ -16,7 +16,7 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetAllPatientBills", Name = "GetAllBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -68,7 +68,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetNotPaidPatientBills", Name = "GetNotPaidBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -121,7 +121,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetPaidPatientBills", Name = "GetPaidBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -174,7 +174,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpPost("CreateBill", Name = "CreateBill")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -228,7 +228,7 @@ namespace HospitalAPI.Controllers
 
 
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpPatch("PayBill", Name = "PayBillByIds")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]

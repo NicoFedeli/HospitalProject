@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Numerics;
 using System.Security.Claims;
 using System.Text;
 
@@ -22,22 +23,24 @@ namespace HospitalAPI.Controllers
         }
 
         [HttpPost]
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(int id,string username,string role)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
             };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("RDF"));
+        
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("una-super-chiave-lunghissima-e-segreta-123456789"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
               issuer: "IssuerServer",
               audience: "AudienceServer",
               claims: claims,
-              expires: DateTime.UtcNow,
+              expires: DateTime.UtcNow.AddMinutes(30),
               signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -90,7 +93,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        //SOLO FASE TEST
         [HttpGet("GetAllDoctors", Name = "GetAllDoctors")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -143,7 +146,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentDoctors", Name = "GetAllDepartmentDoctors")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -197,7 +200,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDepartmentNurseFromDoctor", Name = "GetAllDepartmentNurseFromDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -313,7 +316,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpPut("ModifyDoctor", Name = "ModifyDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -333,6 +336,14 @@ namespace HospitalAPI.Controllers
                                 Message = $"No nurse found with id {doctor.ID}"
                             });
 
+                        var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = doctor.Username,
+                                Message = $"{doctor.Username} already exists in our database"
+                            });
                         oldDoctor.Name = doctor.Name;
                         oldDoctor.Surname = doctor.Surname;
                         oldDoctor.Username = doctor.Username;
@@ -376,7 +387,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin")]
         [HttpDelete("DeleteDoctor", Name = "DeleteDoctor")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -431,7 +442,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-
+        //SOLO TEST
         [Authorize]
         [HttpGet("GetAllNurses", Name = "GetAllNurses")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
@@ -484,7 +495,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentNurses", Name = "GetAllDepartmentNurses")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NurseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -539,7 +550,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentDoctorsFromNurse", Name = "GetAllDepartmentDoctorsFromNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -655,7 +666,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin")]
         [HttpPut("ModifyNurse", Name = "ModifyNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -673,6 +684,15 @@ namespace HospitalAPI.Controllers
                             {
                                 Status = "KO",
                                 Message = $"No nurse found with id {nurse.ID}"
+                            });
+
+                        var alreadyExist = UsernameAlreadyExist(context, nurse.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = nurse.Username,
+                                Message = $"{nurse.Username} already exists in our database"
                             });
 
                         oldNurse.Name = nurse.Name;
@@ -717,7 +737,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "NurseAdmin")]
         [HttpDelete("DeleteNurse", Name = "DeleteNurse")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -772,7 +792,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllPatients", Name = "GetAllPatients")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatientResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -886,7 +906,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpPut("ModifyPatient", Name = "ModifyPatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -904,6 +924,14 @@ namespace HospitalAPI.Controllers
                             {
                                 Status = "KO",
                                 Message = $"No nurse found with id {patient.ID}"
+                            });
+                        var alreadyExist = UsernameAlreadyExist(context, patient.Username);
+                        if (alreadyExist)
+                            return BadRequest(new ResponsePostCreateUser()
+                            {
+                                Status = "KO",
+                                Username = patient.Username,
+                                Message = $"{patient.Username} already exists in our database"
                             });
 
                         oldPatient.Name = patient.Name;
@@ -948,7 +976,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpDelete("DeletePatient", Name = "DeletePatient")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -1002,18 +1030,7 @@ namespace HospitalAPI.Controllers
             }
 
         }
-
-        // ✅ POST: /api/User/Logout
-        [HttpPost("Logout")]
-        [Authorize]
-        public IActionResult Logout()
-        {
-            // Cancella tutti i dati della sessione
-            HttpContext.Session.Clear();
-
-            return Ok(new { Status = "OK", Message = "Logged out successfully" });
-        }
-
+        
         private IActionResult SearchUser(string username, string password, HospitalDbContext context)
         {
             var doctor = context.doctors.FirstOrDefault(x => x.Username == username && x.Password == password);
@@ -1030,54 +1047,75 @@ namespace HospitalAPI.Controllers
                             Message = "Invalid username or password."
                         });
                     else
-                        // Salvo i dati in sessione
-                        HttpContext.Session.SetString("UserId", patient.ID.ToString());
-                        HttpContext.Session.SetString("Username", patient.Username);
-                        HttpContext.Session.SetString("Role", "Patient");
-                        HttpContext.Session.SetString("Admin", "false");
-                        
+                    {
+                        var token = GenerateJwtToken(patient.ID, patient.Username, "Patient");
                         return Ok(new LoginResponse()
                         {
 
                             Status = "OK",
                             Message = $"{username} logged succesfully as patient",
-                            Data = new LoginResponseData {
+                            Data = new LoginResponseData
+                            {
                                 Id = patient.ID,
                                 Username = patient.Username,
                                 Role = "Patient",
-                                Admin = false
+                                Token = "Bearer " + token
                             }
                         });
+                    }
                 }
-                else
+                else if (nurse.Admin)
                 {
-                    // Salvo i dati in sessione
-                    HttpContext.Session.SetString("UserId", nurse.ID.ToString());
-                    HttpContext.Session.SetString("Username", nurse.Username);
-                    HttpContext.Session.SetString("Role", "Nurse");
-                    HttpContext.Session.SetString("Admin", nurse.Admin.ToString());
-
+                    var token = GenerateJwtToken(nurse.ID, nurse.Username, "NurseAdmin");
                     return Ok(new LoginResponse()
                     {
                         Status = "OK",
                         Message = $"{username} logged succesfully as nurse",
-                        Data = new LoginResponseData {
+                        Data = new LoginResponseData
+                        {
+                            Id = nurse.ID,
+                            Username = nurse.Username,
+                            Role = "AdminNurse",
+                            Token = "Bearer " + token
+                        }
+                    });
+                }
+                else
+                {
+                    var token = GenerateJwtToken(nurse.ID, nurse.Username, "Nurse");
+                    return Ok(new LoginResponse()
+                    {
+                        Status = "OK",
+                        Message = $"{username} logged succesfully as nurse",
+                        Data = new LoginResponseData
+                        {
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "Nurse",
-                            Admin = nurse.Admin
+                            Token = "Bearer " + token
                         }
                     });
                 }
             }
+            else if (doctor.Admin)
+            {
+                var token = GenerateJwtToken(doctor.ID, doctor.Username, "DoctorAdmin");
+                return Ok(new LoginResponse()
+                {
+                    Status = "OK",
+                    Message = $"{username} logged succesfully as doctor",
+                    Data = new LoginResponseData
+                    {
+                        Id = doctor.ID,
+                        Username = doctor.Username,
+                        Role = "DoctorAdmin",
+                        Token = "Bearer " + token
+                    }
+                });
+            }
             else
             {
-                // Salvo i dati in sessione
-                HttpContext.Session.SetString("UserId", doctor.ID.ToString());
-                HttpContext.Session.SetString("Username", doctor.Username);
-                HttpContext.Session.SetString("Role", "Doctor");
-                HttpContext.Session.SetString("Admin", doctor.Admin.ToString());
-
+                var token = GenerateJwtToken(doctor.ID, doctor.Username, "Doctor");
                 return Ok(new LoginResponse()
                 {
                     Status = "OK",
@@ -1086,7 +1124,7 @@ namespace HospitalAPI.Controllers
                         Id = doctor.ID,
                         Username = doctor.Username,
                         Role = "Doctor",
-                        Admin = doctor.Admin
+                        Token = "Bearer " + token
                     }
                 });
             }

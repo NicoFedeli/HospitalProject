@@ -16,7 +16,7 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        //SOLO TEST
         [HttpGet("GetAllAppointments", Name = "GetAllAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -69,7 +69,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPost("CreateAppointment", Name = "CreateAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -77,17 +77,11 @@ namespace HospitalAPI.Controllers
         {
             try
             {
-                var newAppointment = new Appointment()
-                {
-                    IDPatient = appointment.IDPatient,
-                    IDDoctor = appointment.IDDoctor,
-                    Date = appointment.Date
-                };
                 using (var context = new HospitalDbContext())
                 {
                     try
                     {
-                        context.appointments.Add(newAppointment);
+                        context.appointments.Add(appointment);
                         context.SaveChanges();
                         var response = new GetResponse()
                         {
@@ -121,7 +115,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetAllPatientAppointments", Name = "GetAllPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -173,7 +167,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetFuturePatientAppointments", Name = "GetFuturePatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -226,7 +220,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Patient")]
         [HttpGet("GetPastPatientAppointments", Name = "GetPastPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -278,11 +272,11 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentAppointments", Name = "GetAllDepartmentAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
-        public IActionResult GetAllDepartmentAppointments(int doctorId)
+        public IActionResult GetAllDepartmentAppointments(string department)
         {
             try
             {
@@ -290,37 +284,18 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        string? rightDepartment = FindDoctorDepartment(doctorId, context);
-
-                        var appointments = context.appointments.ToList();
-                        if (appointments.Any() && !String.IsNullOrEmpty(rightDepartment))
-                        {
-                            List<Appointment> rightAppointments = new List<Appointment>();
-                            foreach (var item in appointments)
+                        var appointments = context.appointments.Where(x => x.Department == department);
+                        if (appointments.Any())
+                            return Ok(new AppointmentResponse()
                             {
-                                string? department = FindDoctorDepartment(item.IDDoctor, context);
-                                if (department == rightDepartment)
-                                    rightAppointments.Add(item);
-
-                            }
-                            if (rightAppointments.Count > 0)
-                                return Ok(new AppointmentResponse()
-                                {
-                                    Status = "OK",
-                                    Appointments = rightAppointments
-                                });
-                            else
-                                return BadRequest(new GetResponse()
-                                {
-                                    Status = "KO",
-                                    Message = $"No appointments found for department {rightDepartment}"
-                                });
-                        }
+                                Status = "OK",
+                                Appointments = appointments.ToList()
+                            });
                         else
                             return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Message = $"No records found for doctor {doctorId}"
+                                Message = $"No Appointments found for department {department}"
                             });
                     }
                     catch (Exception ex)
@@ -347,7 +322,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDoctorAppointments", Name = "GetAllDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -400,7 +375,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetFutureDoctorAppointments", Name = "GetFutureDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -453,7 +428,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetPastDoctorAppointments", Name = "GetPastDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -505,7 +480,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPut("ModifyAppointment", Name = "ModifyApointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -527,6 +502,7 @@ namespace HospitalAPI.Controllers
 
                         oldAppointment.IDPatient = appointment.IDPatient;
                         oldAppointment.IDDoctor = appointment.IDDoctor;
+                        oldAppointment.Department = appointment.Department;
                         oldAppointment.Date = appointment.Date;
 
                         context.SaveChanges();
@@ -563,7 +539,7 @@ namespace HospitalAPI.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpDelete("DeleteAppointment", Name = "DeleteAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -616,13 +592,6 @@ namespace HospitalAPI.Controllers
                 });
             }
 
-        }
-
-        private static string? FindDoctorDepartment(int doctorId, HospitalDbContext context)
-        {
-            var doctor = context.doctors.FirstOrDefault(x => x.ID == doctorId);
-            var rightDepartment = doctor?.Department;
-            return rightDepartment;
         }
     }
 }
