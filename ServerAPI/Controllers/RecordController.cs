@@ -3,6 +3,7 @@ using HospitalAPI.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.ConstrainedExecution;
 
 namespace HospitalAPI.Controllers
 {
@@ -17,8 +18,8 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
-
-        [Authorize(Roles ="DoctorAdmin,NurseAdmin,Doctor,Nurse,Patient")]
+        //Ritorna tutte le ricette di un paziente specifico passato con id
+        [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor,Nurse,Patient")]
         [HttpGet("GetAllPatientRecords", Name = "GetAllPatientRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -70,6 +71,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorna tutte le ricette in cui e presente il medico passato tramite id
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDoctorRecords", Name = "GetAllDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
@@ -122,7 +124,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //ritorna tutte le ricette di un determinato reparto in base al dottore passato con id
         [Authorize(Roles = "DoctorAdmin")]
         [HttpGet("GetAllDepartmentDoctorRecords", Name = "GetAllDepartmentDoctorRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
@@ -135,15 +137,19 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
+                        //vado a prendere il dipartimento del dottore
                         string? rightDepartment = FindDoctorDepartment(doctorId, context);
 
+                        //vado a prendermi tutte le ricette esistenti
                         var records = context.records.ToList();
                         if (records.Any() && !String.IsNullOrEmpty(rightDepartment))
                         {
                             List<Record> rightRecords = new List<Record>();
                             foreach (var item in records)
                             {
+                                //vado a cercare il dipartimento del dottore presente in ogni ricetta
                                 string? department = FindDoctorDepartment(item.IDDoctor, context);
+                                //se corrisponde con quello del dottore che gli ho passato se lo salva per poi tornarlo
                                 if (department == rightDepartment)
                                     rightRecords.Add(item);
 
@@ -192,7 +198,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //ritorna tutte le ricette dove una infermiera ha partecipato passata tramite id
         [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor,Nurse")]
         [HttpGet("GetAllNurseRecords", Name = "GetAllNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
@@ -245,6 +251,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorna tutte le ricette di un reparto di un infermiera specifica passata tramite id
         [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpGet("GetAllDepartmentNurseRecords", Name = "GetAllDepartmentNurseRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
@@ -257,20 +264,24 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
+                        //trovo il dipartimento della infermiera
                         string? rightDepartment = FindNurseDepartment(nurseId, context);
 
+                        //prendo tute le ricette
                         var records = context.records.ToList();
                         if (records.Any() && !String.IsNullOrEmpty(rightDepartment))
                         {
                             List<Record> rightRecords = new List<Record>();
                             foreach (var item in records)
                             {
+                                //per ogni ricetta guardo il dipartimento dell infermiera
                                 string? department = FindNurseDepartment(item.IDNurse, context);
+                                // se il dipartimento è uguale salvo la ricetta per ritornarla
                                 if (department == rightDepartment)
                                     rightRecords.Add(item);
 
                             }
-                            if(rightRecords.Count>0)
+                            if (rightRecords.Count > 0)
                                 return Ok(new RecordResponse()
                                 {
                                     Status = "OK",
@@ -314,7 +325,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //Creazione di una nuova ricetta
         [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpPost("CreateRecord", Name = "CreateRecord")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -325,25 +336,30 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        context.records.Add(record);
-                        context.SaveChanges();
-                        return Ok(new GetResponse()
+                        try
                         {
-                            Status = "OK",
-                            Message = "Record succesfully created"
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
+                            context.records.Add(record);
+                            context.SaveChanges();
+                            transaction.Commit();
+                            return Ok(new GetResponse()
+                            {
+                                Status = "OK",
+                                Message = "Record succesfully created"
+                            });
+                        }
+                        catch (Exception ex)
                         {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = ex.Message
+                            });
+                        }
                     }
                 }
             }
@@ -359,7 +375,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //Modifica di una ricetta
         [Authorize(Roles = "DoctorAdmin,NurseAdmin,Doctor")]
         [HttpPut("ModifyRecords", Name = "ModifyRecords")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RecordResponse))]
@@ -370,49 +386,55 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        var oldRecord = context.records.FirstOrDefault(x => x.ID == record.ID);
-                        if (oldRecord == null)
-                            return BadRequest(new GetResponse()
-                            {
-                                Status = "KO",
-                                Message = $"No records found with id {record.ID}"
-                            });
-                        else
+                        try
                         {
-                            if((oldRecord.IDDoctor != record.IDDoctor) || (oldRecord.IDNurse != record.IDNurse))
+                            //controllo che esista la ricetta da modificare
+                            var oldRecord = context.records.FirstOrDefault(x => x.ID == record.ID);
+                            if (oldRecord == null)
                                 return BadRequest(new GetResponse()
                                 {
                                     Status = "KO",
-                                    Message = $"You can't change Doctor/Nurse IDs"
+                                    Message = $"No records found with id {record.ID}"
+                                });
+                            else
+                            {
+                                //controllo che gli id dei dottori e infermiere non sia cambiato per evitare manomissioni alle cartelle cliniche
+                                if ((oldRecord.IDDoctor != record.IDDoctor) || (oldRecord.IDNurse != record.IDNurse))
+                                    return BadRequest(new GetResponse()
+                                    {
+                                        Status = "KO",
+                                        Message = $"You can't change Doctor/Nurse IDs"
+                                    });
+
+                                //sostituisco solo i valori possibili da modificare
+                                NewRecord(record, oldRecord);
+
+                                context.SaveChanges();
+                                transaction.Commit();
+
+                                return Ok(new GetResponse()
+                                {
+                                    Status = "OK",
+                                    Message = $"Record {record.ID} successfully modified "
                                 });
 
-                            oldRecord.Prescription = record.Prescription;
-                            oldRecord.Diagnosis = record.Diagnosis;
-                            oldRecord.Treatment = record.Treatment;
+                            }
 
-                            context.SaveChanges();
-
-                            return Ok(new GetResponse()
-                            {
-                                Status = "OK",
-                                Message = $"Record {record.ID} successfully modified "
-                            });
 
                         }
-                            
-                           
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
+                        catch (Exception ex)
                         {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = ex.Message
+                            });
+                        }
                     }
                 }
             }
@@ -428,6 +450,12 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        private static void NewRecord(Record record, Record oldRecord)
+        {
+            oldRecord.Prescription = record.Prescription;
+            oldRecord.Diagnosis = record.Diagnosis;
+            oldRecord.Treatment = record.Treatment;
+        }
 
         private static string? FindDoctorDepartment(int doctorId, HospitalDbContext context)
         {

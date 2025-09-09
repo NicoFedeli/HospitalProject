@@ -16,6 +16,7 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
+        //ritorna tutti i ticket di un paziente specifico
         [Authorize(Roles = "Patient")]
         [HttpGet("GetAllPatientBills", Name = "GetAllBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
@@ -68,6 +69,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //Ritorna tutti i ticket non pagati di un utente specifico
         [Authorize(Roles = "Patient")]
         [HttpGet("GetNotPaidPatientBills", Name = "GetNotPaidBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
@@ -120,7 +122,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //Ritorna tutti i ticket già pagati di uno specifico paziente
         [Authorize(Roles = "Patient")]
         [HttpGet("GetPaidPatientBills", Name = "GetPaidBillsByPatientId")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BillResponse))]
@@ -173,7 +175,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //Creazione di un ticket
         [Authorize(Roles = "DoctorAdmin")]
         [HttpPost("CreateBill", Name = "CreateBill")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -182,34 +184,33 @@ namespace HospitalAPI.Controllers
         {
             try
             {
-                var newBill = new Bill()
-                {
-                    IDPatient = bill.IDPatient,
-                    Amount = bill.Amount,
-                    Status = bill.Status
-                };
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        context.bills.Add(newBill);
-                        context.SaveChanges();
-                        var response = new GetResponse()
+                        try
                         {
-                            Status = "OK",
-                            Message = "Bill succesfully created"
-                        };
-                        return Ok(response);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
+                            context.bills.Add(bill);
+                            context.SaveChanges();
+                            transaction.Commit();
+                            var response = new GetResponse()
+                            {
+                                Status = "OK",
+                                Message = "Bill succesfully created"
+                            };
+                            return Ok(response);
+                        }
+                        catch (Exception ex)
                         {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = ex.Message
+                            });
+                        }
                     }
 
                 }
@@ -227,7 +228,7 @@ namespace HospitalAPI.Controllers
         }
 
 
-
+        //Permette il pagamento di un ticket cambiandolo di stato
         [Authorize(Roles = "Patient")]
         [HttpPatch("PayBill", Name = "PayBillByIds")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -238,46 +239,52 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        var bill = context.bills.FirstOrDefault(x => x.ID == id && x.IDPatient == patientId);
-
-                        if (bill == null)
-                            return BadRequest(new GetResponse()
-                            {
-                                Status = "KO",
-                                Message = "Bill not found"
-                            });
-                        else
+                        try
                         {
-                            if(bill.Status == Constants.BillStatusPaid)
+                            //controllo che esista il ticket
+                            var bill = context.bills.FirstOrDefault(x => x.ID == id && x.IDPatient == patientId);
+
+                            if (bill == null)
                                 return BadRequest(new GetResponse()
                                 {
                                     Status = "KO",
-                                    Message = $"Bill {id} has been already paid"
-                                }); ;
-
-                            bill.Status = Constants.BillStatusPaid;
-                            context.SaveChanges();
-
-                            return Ok(new GetResponse()
+                                    Message = "Bill not found"
+                                });
+                            else
                             {
-                                Status = "OK",
-                                Message = $"Bill {id} successfully paid"
-                            });
+                                //se esiste controllo che non sia gia pagato
+                                if (bill.Status == Constants.BillStatusPaid)
+                                    return BadRequest(new GetResponse()
+                                    {
+                                        Status = "KO",
+                                        Message = $"Bill {id} has been already paid"
+                                    }); ;
+
+                                //cambio lo stato da non pagato a pagato
+                                bill.Status = Constants.BillStatusPaid;
+                                context.SaveChanges();
+                                transaction.Commit();
+                                return Ok(new GetResponse()
+                                {
+                                    Status = "OK",
+                                    Message = $"Bill {id} successfully paid"
+                                });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = ex.Message
+                            }); ;
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
-                        {
-                            Status = "KO",
-                            Message = ex.Message
-                        }); ;
-                    }
-                
                 }
             }
             catch (Exception ex)
