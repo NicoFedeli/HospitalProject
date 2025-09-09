@@ -273,8 +273,7 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new ResponsePostCreateUser()
                             {
                                 Status = "KO",
-                                Username = doctor.Username,
-                                Message = "already exists in our database"
+                                Message = $"{doctor.Username}already exists in our database"
                             });
 
                         context.doctors.Add(doctor);
@@ -283,8 +282,7 @@ namespace HospitalAPI.Controllers
                         var response = new ResponsePostCreateUser()
                         {
                             Status = "OK",
-                            Username = doctor.Username,
-                            Message = $"Succesfully created a new Doctor"
+                            Message = $"Succesfully created a new Doctor: ${doctor.Username}"
                         };
                         return Ok(response);
                     }
@@ -292,14 +290,11 @@ namespace HospitalAPI.Controllers
                     {
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.StackTrace);
-                        var response = new ResponsePostCreateUser()
+                        return BadRequest(new GetResponse()
                         {
                             Status = "KO",
-                            Username = doctor.Username,
                             Message = ex.Message
-                        };
-
-                        return BadRequest(response);
+                        });
                     }
                 }
             }
@@ -308,10 +303,9 @@ namespace HospitalAPI.Controllers
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                return BadRequest(new ResponsePostCreateUser()
+                return BadRequest(new GetResponse()
                 {
                     Status = "KO",
-                    Username = doctor.Name,
                     Message = ex.Message
                 });
             }
@@ -339,10 +333,9 @@ namespace HospitalAPI.Controllers
 
                         var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
                         if (alreadyExist)
-                            return BadRequest(new ResponsePostCreateUser()
+                            return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Username = doctor.Username,
                                 Message = $"{doctor.Username} already exists in our database"
                             });
                         oldDoctor.Name = doctor.Name;
@@ -624,8 +617,7 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new ResponsePostCreateUser()
                             {
                                 Status = "KO",
-                                Username = nurse.Username,
-                                Message = "already exists in our database"
+                                Message = $"{nurse.Username} already exists in our database"
                             });
 
                         context.nurses.Add(nurse);
@@ -634,8 +626,7 @@ namespace HospitalAPI.Controllers
                         var response = new ResponsePostCreateUser()
                         {
                             Status = "OK",
-                            Username = nurse.Username,
-                            Message = $"Succesfully created a new Nurse"
+                            Message = $"{nurse.Username}Succesfully created a new Nurse"
                         };
                         return Ok(response);
                     }
@@ -643,14 +634,11 @@ namespace HospitalAPI.Controllers
                     {
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.StackTrace);
-                        var response = new ResponsePostCreateUser()
+                        return BadRequest(new GetResponse()
                         {
                             Status = "KO",
-                            Username = nurse.Username,
                             Message = ex.Message
-                        };
-
-                        return BadRequest(response);
+                        });
                     }
                 }
             }
@@ -658,10 +646,9 @@ namespace HospitalAPI.Controllers
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                return BadRequest(new ResponsePostCreateUser()
+                return BadRequest(new GetResponse()
                 {
                     Status = "KO",
-                    Username = nurse.Name,
                     Message = ex.Message
                 });
             }
@@ -692,7 +679,6 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new ResponsePostCreateUser()
                             {
                                 Status = "KO",
-                                Username = nurse.Username,
                                 Message = $"{nurse.Username} already exists in our database"
                             });
 
@@ -864,8 +850,7 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new ResponsePostCreateUser()
                             {
                                 Status = "KO",
-                                Username = patient.Username,
-                                Message = "already exists in our database"
+                                Message = $"{patient.Username} already exists in our database"
                             });
 
                         context.patients.Add(patient);
@@ -874,8 +859,7 @@ namespace HospitalAPI.Controllers
                         var response = new ResponsePostCreateUser()
                         {
                             Status = "OK",
-                            Username = patient.Username,
-                            Message = $"Succesfully created a new Patient"
+                            Message = $"{patient.Username} Succesfully created a new Patient"
                         };
                         return Ok(response);
                     }
@@ -883,14 +867,11 @@ namespace HospitalAPI.Controllers
                     {
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.StackTrace);
-                        var response = new ResponsePostCreateUser()
+                        return BadRequest(new GetResponse()
                         {
                             Status = "KO",
-                            Username = patient.Username,
                             Message = ex.Message
-                        };
-
-                        return BadRequest(response);
+                        });
                     }
                 }
             }
@@ -898,10 +879,9 @@ namespace HospitalAPI.Controllers
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                return BadRequest(new ResponsePostCreateUser()
+                return BadRequest(new GetResponse()
                 {
                     Status = "KO",
-                    Username = patient.Name,
                     Message = ex.Message
                 });
             }
