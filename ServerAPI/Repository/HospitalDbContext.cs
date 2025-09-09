@@ -10,7 +10,6 @@ namespace HospitalAPI.Repository
         public DbSet<Patient> patients { get; set; }
         public DbSet<Bill> bills { get; set; }
         public DbSet<Appointment> appointments { get; set; }
-        public DbSet<Record> records { get; set; }
 
 
 

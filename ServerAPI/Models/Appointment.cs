@@ -17,7 +17,11 @@ namespace HospitalAPI.Models
         [Required]
         public DateTime Date { get; set; }
         [Required]
+        // Campi da compilare una volta finita l'appuntamento
         public string Department { get; set; }
+        public string? Diagnosis { get; set; }
+        public string? Prescription { get; set; }
+        public string? Treatment { get; set; }
 
     }
 }
