@@ -21,8 +21,5 @@ namespace Hospital.Models.Nurse
 
         [Display(Name = "Department")]
         public Department? Department { get; set; }
-
-        [Display(Name = "Is Primary Nurse?")] // Traduzione da migliorare
-        public bool Admin { get; set; }
     }
 }

@@ -1,0 +1,153 @@
+﻿@{
+    ViewData["Title"] = "Total Nurses";
+}
+@using Hospital.Models.Enums;
+
+@model List<Hospital.Models.Nurse.NurseViewModel>
+@* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
+@{
+    var departmentColors = new Dictionary<Department, string>
+    {
+        { Department.Cardiology, "bg-danger" },      // rosso
+        { Department.Neurology, "bg-primary" },      // blu
+        { Department.Pediatrics, "bg-warning" },     // giallo
+        { Department.Emergency, "bg-success" },      // verde
+        { Department.General, "bg-info" }            // azzurro
+    };
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Total Nurses</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">View Nurses</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"> Shows all Nurses</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if (!Model.Any())
+                        {
+                            <div class="alert alert-warning">No nurses found in this department.</div>
+                        }
+                        else
+                        {
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(m => m.First().Name)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Surname)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Username)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Department)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Phone)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var nurse in Model)
+                                    {
+                                        <tr>
+                                            <td>@nurse.Name</td>
+                                            <td>@nurse.Surname</td>
+                                            <td>@nurse.Username</td>
+                                            <td>
+                                                <span class="badge @(nurse.Department.HasValue? departmentColors[nurse.Department.Value] : "bg-secondary") "
+                                                      style="font-size: 0.9rem; padding: 0.4em 0.8em; border-radius: 0.25rem; letter-spacing: 0.5px;">
+                                                    @nurse.Department
+                                                </span>
+                                            </td>
+                                            <td>@nurse.Phone</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(m => m.First().Name)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Surname)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Username)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Department)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Phone)</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <!-- DataTables core -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- DataTables Responsive -->
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/jszip/jszip.min.js"></script>
+    <script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+    <!-- jQuery UI (per sortable, se ti serve) -->
+    <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            console.log("Inizializzo DataTable...");
+
+            $("#example1").DataTable({
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false,
+                buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+}

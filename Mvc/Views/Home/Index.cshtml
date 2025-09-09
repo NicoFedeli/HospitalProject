@@ -26,10 +26,26 @@
     <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
 </head>
 
-@* var token = User.FindFirst("Token")?.Value; *@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dashboard</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
 
-
-<body class="hold-transition">
+<main role="main" class="content">
+    <div class="container-fluid">
+        <body class="hold-transition">
     <!-- Small boxes (Stat box) -->
     <div class="row">
         @if (User.IsInRole("Doctor") || User.IsInRole("DoctorAdmin") || 
@@ -46,7 +62,7 @@
                     <div class="icon">
                         <i class="fas fa-user-md"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a asp-controller="Doctor" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -61,7 +77,22 @@
                     <div class="icon">
                         <i class="fas fa-user-nurse"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a asp-controller="Nurse" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Total Patients -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.TotalPatients</h3>
+                        <p>Total Patients</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <a asp-controller="Patient" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
         }
@@ -75,6 +106,7 @@
                         <p>Paid Bills</p>
                     </div>
                     <div class="icon"><i class="fas fa-money-bill"></i></div>
+                    <a asp-controller="Patient" asp-action="PaidBills" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -86,6 +118,7 @@
                         <p>Unpaid Bills</p>
                     </div>
                     <div class="icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <a asp-controller="Patient" asp-action="NotPaidBills" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 		}
@@ -240,4 +273,6 @@
         })
     </script>
 </body>
+    </div>
+</main>
 </html>

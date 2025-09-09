@@ -24,9 +24,6 @@ namespace Hospital.Models.Doctor
 
         [DisplayName("Department")]
         public Department? Department { get; set; }
-
-        [DisplayName("Is Primary Doctor?")]
-        public bool Admin { get; set; }
     }
 
 

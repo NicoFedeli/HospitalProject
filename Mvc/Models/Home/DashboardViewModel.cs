@@ -7,6 +7,7 @@ namespace Hospital.Models.Home
         // Per Doctor e Nurse
         public int TotalDoctors { get; set; }
         public int TotalNurses { get; set; }
+        public int TotalPatients { get; set; }
 
         // Per Patient
         public int PaidBills { get; set; }
