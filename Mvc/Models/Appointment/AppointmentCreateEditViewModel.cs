@@ -28,6 +28,13 @@ namespace Hospital.Models.Appointment
         [ValidDepartment(ErrorMessage = "Dipartimento non valido. Valori ammessi: Cardiology, Neurology, Pediatrics, Emergency, General")]
         public string Department { get; set; }
 
+        [Display(Name = "Diagnosis")]
+        public string? Diagnosis { get; set; }
+        [Display(Name = "Prescription")]
+        public string? Prescription { get; set; }
+        [Display(Name = "Treatment")]
+        public string? Treatment { get; set; }
+
         // Liste di supporto per le dropdown (mostro il nome utente, invio l'id)
         public List<SelectListItem> Patients { get; set; } = new();
         public List<SelectListItem> Doctors { get; set; } = new();

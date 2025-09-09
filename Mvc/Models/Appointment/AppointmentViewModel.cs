@@ -31,5 +31,12 @@ namespace Hospital.Models.Appointment
 
         [Display(Name = "Date and Time")]
         public DateTime Date { get; set; }
+
+        [Display(Name ="Diagnosis")]
+        public string? Diagnosis { get; set; }
+        [Display(Name = "Prescription")]
+        public string? Prescription { get; set; }
+        [Display(Name = "Treatment")]
+        public string? Treatment { get; set; }
     }
 }

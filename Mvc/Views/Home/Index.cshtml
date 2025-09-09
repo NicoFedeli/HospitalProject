@@ -169,8 +169,12 @@
                                             <strong>Department:</strong>
                                             <span id="detail-department" style="font-weight: bold;"></span>
                                         </p>
+                                        <p><strong>Diagnosis:</strong> <span id="detail-diagnosis"></span></p>
+                                        <p><strong>Prescription:</strong> <span id="detail-prescription"></span></p>
+                                        <p><strong>Treatment:</strong> <span id="detail-treatment"></span></p>
+
                                     </div>
-                                </div>                            
+                                </div>   
                             </div>
                         </div>
                         <!-- /.col -->
@@ -243,7 +247,10 @@
                   doctorUsername: item.DoctorName,
                   nurseUsername: item.NurseName,
                   patientUsername: item.PatientName,
-                  department: item.Department
+                  department: item.Department,
+                  diagnosis: item.Diagnosis,
+		    	  prescription: item.Prescription,
+                  treatment: item.Treatment
                 }
             })),
             editable  : false,
@@ -259,6 +266,10 @@
               document.getElementById('detail-nurse').innerText = props.nurseUsername || '—';
               document.getElementById('detail-patient').innerText = props.patientUsername;
               document.getElementById('detail-date').innerText = new Date(event.start).toLocaleString();
+              document.getElementById('detail-diagnosis').innerText = props.diagnosis || '—';
+              document.getElementById('detail-prescription').innerText = props.prescription || '—';
+              document.getElementById('detail-treatment').innerText = props.treatment || '—';
+
 
               const deptEl = document.getElementById('detail-department');
               deptEl.innerText = props.department;

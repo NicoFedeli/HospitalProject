@@ -53,7 +53,7 @@ namespace Hospital.Controllers
                 return RedirectToAction("LogIn", "User");
             }
             // Solo i pazienti possono vedere le loro fatture
-            if (role != "Patient" || userId != id.ToString())
+            if (role != "Patient")
             {
                 return Forbid();
             }
@@ -65,4 +65,5 @@ namespace Hospital.Controllers
             }
             return View(response.Data);
         }
+    }
 }
