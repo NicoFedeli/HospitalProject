@@ -3,6 +3,6 @@
     public class DoctorResponse
     {
         public string Status { get; set; }
-        public List<Doctor> Doctors { get; set; }
+        public List<Doctor> Data { get; set; }
     }
 }

@@ -1,17 +1,17 @@
+using Hospital.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(); // lascio questo per il momento. Appena ho i cookie auth lo elimino
-//builder.Services.AddControllersWithViews(options =>
-//{
-//    // Tutti i controller richiedono autenticazione di default, rende [Authorize] implicito in tutti i controller
-//    // Nelle View di Login e SignUp uso [AllowAnonymous] per permettere l'accesso anonimo
-//    // In questo modo uno non loggato viene reindirizzato alla pagina di login
-//    options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
-//});
+builder.Services.AddControllersWithViews(options =>
+{
+    // Tutti i controller richiedono autenticazione di default, rende [Authorize] implicito in tutti i controller
+    // Nelle View di Login e SignUp uso [AllowAnonymous] per permettere l'accesso anonimo
+    // In questo modo uno non loggato viene reindirizzato alla pagina di login
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+});
 
 builder.Services.AddHttpContextAccessor(); // Per iniettare IHttpContextAccessor in UI/_ToastScripts
 builder.Services.AddDistributedMemoryCache(); // Memoria temporanea per sessione
@@ -22,11 +22,13 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Necessario per GDPR
 });
 
-// Registro HttpClient + ApiService
+builder.Services.AddTransient<BearerTokenHandler>(); // aggiundo il BearerTokenHandler come servizio transient (una nuova istanza per ogni richiesta)
 builder.Services.AddHttpClient<IApiHelper, ApiHelper>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
-});
+})
+.AddHttpMessageHandler<BearerTokenHandler>();
+
 
 // Cookie auth (login/logout lato MVC)
 builder.Services
@@ -36,7 +38,9 @@ builder.Services
         o.LoginPath = "/User/LogIn";
         o.LogoutPath = "/User/LogOut";
         o.AccessDeniedPath = "/User/AccessDenied";
-        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        o.ExpireTimeSpan = TimeSpan.FromMinutes(60*24); // Durata cookie: 1 gg (POI ABBASSARE)
+        o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; //altrimenti in localhost senza HTTPS il cookie non viene settato
+        //o.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Solo in produzione con HTTPS
     });
 
 var app = builder.Build();
@@ -52,7 +56,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession(); // per usare HttpContext.Session
+app.UseSession(); // per usare HttpContext
 app.UseAuthentication(); // Autenticazione
 app.UseAuthorization(); // Autorizzazione
 

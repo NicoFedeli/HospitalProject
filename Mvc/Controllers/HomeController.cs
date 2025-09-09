@@ -1,41 +1,75 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Hospital.Models;
+using Hospital.Models.Appointment;
+using Hospital.Models.Bill;
+using Hospital.Models.Doctor;
+using Hospital.Models.Home;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hospital.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IApiHelper _api;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IApiHelper api)
         {
-            _logger = logger;
+            _api = api;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+
+            var model = new DashboardViewModel();
+
+            // Logica in base al ruolo
+            switch (role)
+            {
+                case "Doctor":
+                case "DoctorAdmin":
+                case "Nurse":
+                case "NurseAdmin":
+                    // Totale dottori nel dipartimento
+                    ApiResponse<List<DoctorViewModel>> doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDepartmentDoctors", new { doctorId = userId});
+                    model.TotalDoctors = doctors.Data?.Count ?? 0;
+
+                    // Totale infermieri nel dipartimento
+                    var nurses = await _api.GetAsync<List<UserViewModel>>("api/User/GetAllDepartmentNurseFromDoctor", new { doctorId = userId });
+                    model.TotalNurses = nurses.Data?.Count ?? 0;
+
+                    // Appuntamenti del dottore
+                    var appointments = await _api.GetAsync<List<AppointmentViewModel>>("api/appointment/GetAllDoctorAppointments", new {doctorId = userId});
+                    model.Appointments = appointments.Data ?? new List<AppointmentViewModel>();
+                    break;
+
+                case "Patient":
+                    // Qui lo userId equivale all'id di un paziente
+
+                    // Bills pagati
+                    var paidBills = await _api.GetAsync<List<BillViewModel>>("api/Bill/GetPaidPatientBills", new {id=userId});
+                    model.PaidBills = paidBills.Data?.Count ?? 0;
+
+                    // Bills non pagati
+                    var unpaidBills = await _api.GetAsync<List<BillViewModel>>("api/Bill/GetNotPaidPatientBills", new {id=userId});
+                    model.UnpaidBills = unpaidBills.Data?.Count ?? 0;
+
+                    // Appuntamenti del paziente
+                    var patientAppointments = await _api.GetAsync<List<AppointmentViewModel>>("api/Appointment/GetAllPatientAppointments", new {patientId=userId});
+                    model.Appointments = patientAppointments.Data ?? new List<AppointmentViewModel>();
+                    break;
+            }
+
+            return View(model);
         }
 
-        //Quando avrò le api per leggere il numero di dottori, infermieri
-        //public async Task<IActionResult> Index()
-        //{
-        //    // 1. Recupero dati utente dai claims
-        //    var userRole = User.FindFirstValue(ClaimTypes.Role);
-        //    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        //    // Qui supponiamo che DepartmentId sia collegato all'utente
-        //    int departmentId = 3; // ?? Da recuperare dinamicamente
-
-        //    // 2. Chiamata API
-        //    var response = await _api.GetAsync<StaffStatsViewModel>(
-        //        $"api/Dashboard/GetStaffStats?departmentId={departmentId}");
-
-        //    // 3. Passo alla View
-        //    return View(response.Data);
-        //}
         public IActionResult Privacy()
         {
 

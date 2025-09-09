@@ -28,13 +28,30 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.ToList();
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            }).ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments
+                                Data =appointments 
                             });
                         }
                         else
@@ -127,13 +144,31 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.Where(x => x.IDPatient == patientId);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDPatient == patientId
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            }).ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList() 
                             });
                         }
                         else
@@ -179,13 +214,33 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.OrderBy(x => x.Date).Where(x => x.IDPatient == patientId && x.Date >= DateTime.Now);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDPatient == patientId && a.Date >= DateTime.Now
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         }
                         else
@@ -232,13 +287,33 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.OrderByDescending(x => x.Date).Where(x => x.IDPatient == patientId && x.Date <= DateTime.Now);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDPatient == patientId && a.Date <= DateTime.Now
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            })
+                        .OrderByDescending(x => x.Date)
+                        .ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         }
                         else
@@ -284,12 +359,31 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.Where(x => x.Department == department);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.Department == department
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            }).ToList();
+
+
                         if (appointments.Any())
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         else
                             return BadRequest(new GetResponse()
@@ -334,13 +428,32 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.Where(x => x.IDDoctor == doctorId);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            // LEFT JOIN per l'infermiere
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDDoctor == doctorId
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // o p.Name + " " + p.Surname 
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            }).ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         }
                         else
@@ -387,13 +500,33 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.OrderBy(x => x.Date).Where(x => x.IDDoctor == doctorId && x.Date >= DateTime.Now);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDDoctor == doctorId && a.Date >= DateTime.Now
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         }
                         else
@@ -440,13 +573,33 @@ namespace HospitalAPI.Controllers
                 {
                     try
                     {
-                        var appointments = context.appointments.OrderByDescending(x => x.Date).Where(x => x.IDPatient == doctorId && x.Date <= DateTime.Now);
+                        var appointments = (from a in context.appointments
+                                            join p in context.patients on a.IDPatient equals p.ID
+                                            join d in context.doctors on a.IDDoctor equals d.ID
+                                            join n in context.nurses on a.IDNurse equals n.ID into nurseJoin
+                                            from nurse in nurseJoin.DefaultIfEmpty()
+                                            where a.IDDoctor == doctorId && a.Date <= DateTime.Now
+                                            select new ViewAppoinment
+                                            {
+                                                ID = a.ID,
+                                                IDPatient = a.IDPatient,
+                                                PatientName = p.Username, // oppure p.Name + " " + p.Surname
+                                                IDNurse = a.IDNurse,
+                                                NurseName = nurse != null ? nurse.Username : null,
+                                                IDDoctor = a.IDDoctor,
+                                                DoctorName = d.Username,
+                                                Department = a.Department,
+                                                Date = a.Date
+                                            })
+                        .OrderByDescending(x => x.Date)
+                        .ToList();
+                        
                         if (appointments.Any())
                         {
                             return Ok(new AppointmentResponse()
                             {
                                 Status = "OK",
-                                Appointments = appointments.ToList()
+                                Data = appointments.ToList()
                             });
                         }
                         else

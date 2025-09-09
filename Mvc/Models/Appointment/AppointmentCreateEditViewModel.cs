@@ -23,9 +23,24 @@ namespace Hospital.Models.Appointment
         [FutureDate(ErrorMessage = "The appointment date must be in the future")]
         public DateTime Date { get; set; }
 
-        // Liste di supporto per le dropdown (mostro il nome utente, invio l'id)
-        public List<SelectListItem> Patients { get; set; }
-        public List<SelectListItem> Doctors { get; set; }
+        [Display(Name = "Department")]
+        [Required(ErrorMessage = "Department is required")]
+        [ValidDepartment(ErrorMessage = "Dipartimento non valido. Valori ammessi: Cardiology, Neurology, Pediatrics, Emergency, General")]
+        public string Department { get; set; }
 
+        // Liste di supporto per le dropdown (mostro il nome utente, invio l'id)
+        public List<SelectListItem> Patients { get; set; } = new();
+        public List<SelectListItem> Doctors { get; set; } = new();
+
+    }
+
+
+    public class ValidDepartmentAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            if (value == null) return false;
+            return Enum.GetNames(typeof(Models.Enums.Department)).Contains(value.ToString());
+        }
     }
 }

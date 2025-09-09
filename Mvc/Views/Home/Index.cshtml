@@ -2,7 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 @* Prendo i campi dei department *@
-@model Hospital.Models.SignUpCommonViewModel  
+@using Hospital.Models.Enums;
+@using Newtonsoft.Json; @* Per serializzare in JSON *@
+@model Hospital.Models.Home.DashboardViewModel
 
 @* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
 @{
@@ -24,81 +26,69 @@
     <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
 </head>
 
+@* var token = User.FindFirst("Token")?.Value; *@
+
 
 <body class="hold-transition">
     <!-- Small boxes (Stat box) -->
     <div class="row">
-        <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-                <div class="inner">
-                    @* a <!----> roberto*@
-                    @{
-                        <script>
-						let count = 0;
-                        count = fetch('/api/getAllDoctor').count()
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        document.querySelector('.small-box.bg-info .inner h3').innerText = data.length;
-                                    });
-                        </script>
-						// Inserisco il numero di dottori
-						<h3>count</h3>
-                    }
-                    <p>Total Doctors</p>
+        @if (User.IsInRole("Doctor") || User.IsInRole("DoctorAdmin") || 
+         User.IsInRole("Nurse") || User.IsInRole("NurseAdmin"))
+        {
+            <!-- Total Doctors -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+						<h3>@Model.TotalDoctors</h3>
+                        <p>Total Doctors</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                    <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-                <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
 
-                    <p>Total Nurses</p>
+			<!-- Total Nurses -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@Model.TotalNurses</h3>
+                        <p>Total Nurses</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user-nurse"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
+            </div>
+        }
+        else if (User.IsInRole("Patient"))
+        {
+			<!-- Paid Bills -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.PaidBills</h3>
+                        <p>Paid Bills</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-money-bill"></i></div>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-        </div>
-        <!-- ./col -->
-        @* <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>44</h3>
 
-                <p>User Registrations</p>
+			<!-- Unpaid Bills -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@Model.UnpaidBills</h3>
+                        <p>Unpaid Bills</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-money-bill-wave"></i></div>
+                </div>
             </div>
-            <div class="icon">
-                <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div> *@
-        <!-- ./col -->
-        @* <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>65</h3>
-
-                <p>Unique Visitors</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div> *@
-        <!-- ./col -->
+		}
     </div>
     <!-- /.row -->
 
@@ -191,45 +181,16 @@
           var calendarEl = document.getElementById('calendar');
 
           const departmentColors = {
-             Cardiology: '#e74c3c',    // rosso
-             Neurology: '#3498db',     // blu
-             Pediatrics: '#f1c40f',    // giallo
-             Emergency: '#e67e22',     // arancione
-             General: '#2ecc71'        // verde
+             Cardiology: '#dc3545',    // rosso
+             Neurology: '#007bff',     // blu
+             Pediatrics: '#ffc107',    // giallo
+             Emergency: '#28a745',     // arancione
+             General: '#17a2b8'        // verde
           };
 
-          // Quando avrò i dati:
-          // fetch('/api/Appointments')
-          //   .then(res => res.json())
-          //   .then(data => {
-          //     calendar.addEventSource(data.map(item => ({
-          //       id: item.id,
-          //       title: `${item.patientUsername} - ${item.doctorUsername}${item.nurseUsername ? " - " + item.nurseUsername : ""}`,
-          //       start: item.date,
-          //       backgroundColor: departmentColors[item.department] || '#999',
-          //       borderColor: departmentColors[item.department] || '#999'
-          //   })));
-          // });
 
-
-          const mockAppointments = [
-            {
-                id: 1,
-                patientUsername: "mario.rossi",
-                doctorUsername: "dr.bianchi",
-                nurseUsername: "nurse.lucia",
-                date: "2025-09-08T09:30:00",
-                department: "Cardiology" // l'appuntamento stesso specifica il dipartimento
-            },
-            {
-                id: 2,
-                patientUsername: "giulia.verdi",
-                doctorUsername: "dr.neri",
-                nurseUsername: null,
-                date: "2025-09-08T11:00:00",
-                department: "Neurology"
-            }
-          ];
+          // Serializzo gli appuntamenti ricevuti dal server in una variabile JS
+          var appointments = @Html.Raw(JsonConvert.SerializeObject(Model.Appointments));
 
           var calendar = new Calendar(calendarEl, {
             headerToolbar: {
@@ -238,27 +199,28 @@
               right : 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             themeSystem: 'bootstrap',
-            // Prepare events to fit into the 
-            events: mockAppointments.map(item => ({
-                id: item.id,
-                title: `${item.patientUsername}`,
-                start: item.date,
-                backgroundColor: departmentColors[item.department || item.doctorDepartment] || '#999',
-                borderColor: departmentColors[item.department || item.doctorDepartment] || '#999',
+            // Prepare events to fit into the
+            events: appointments.map(item => ({
+                id: item.ID,
+                title: `${item.PatientName}`,
+                start: item.Date,
+                backgroundColor: departmentColors[item.Department] || '#999',
+                borderColor: departmentColors[item.Department] || '#999',
                 extendedProps: {
-                  doctorUsername: item.doctorUsername,
-                  nurseUsername: item.nurseUsername,
-                  patientUsername: item.patientUsername,
-                  department: item.department
+                  doctorUsername: item.DoctorName,
+                  nurseUsername: item.NurseName,
+                  patientUsername: item.PatientName,
+                  department: item.Department
                 }
             })),
             editable  : false,
             droppable : false, // this allows things to NOT be dropped onto the calendar !!!
-                   // 🔹 Quando clicchi su un evento
-            eventClick: function(info) {
+                   
+            eventClick: function(info) {     // 🔹 Quando clicchi su un evento
               const event = info.event;
               const props = event.extendedProps;
-
+			  console.log('Event clicked:', event);
+			  console.log('Extended Props:', props);
               // Popola la card
               document.getElementById('detail-doctor').innerText = props.doctorUsername;
               document.getElementById('detail-nurse').innerText = props.nurseUsername || '—';
@@ -268,7 +230,6 @@
               const deptEl = document.getElementById('detail-department');
               deptEl.innerText = props.department;
               deptEl.style.color = departmentColors[props.department] || '#000';
-
               // Mostra la card
               document.getElementById('appointment-detail-card').style.display = 'block';
             }

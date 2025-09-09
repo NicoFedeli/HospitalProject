@@ -2,12 +2,11 @@
 @using System.Security.Claims
 
 
-@* VSCEGLI LA CONDIZIONE DA INSERIRE: SESSION O COOKIE *@
 @if (Context.User.Identity?.Name != null)
 {
     var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
     var isAdmin = bool.TryParse(User.FindFirst("IsAdmin")?.Value, out var adminFlag) && adminFlag;
-    var title = GetRole.GetUserTitle(role, isAdmin);
+    var title = GetRole.GetUserTitle(role);
 
     <ul class="nav navbar-nav navbar-right">
         <li class="nav-link">

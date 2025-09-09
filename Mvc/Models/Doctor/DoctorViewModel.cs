@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Hospital.Models.Enums;
 
 namespace Hospital.Models.Doctor
 {
@@ -26,5 +27,11 @@ namespace Hospital.Models.Doctor
 
         [DisplayName("Is Primary Doctor?")]
         public bool Admin { get; set; }
+    }
+
+
+    public class DoctorDataWrapper
+    {
+        public List<DoctorViewModel> Doctors { get; set; } = new();
     }
 }

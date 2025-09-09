@@ -4,7 +4,7 @@
     {
         public string Status { get; set; }      // "OK" o "KO"
         public string? Message { get; set; }    // opzionale, present in caso di errore
-        public T? Data { get; set; }            // opzionale, presente in caso di successo
+        public T? Data { get; set; }            // opzionale, presente in caso di successo. Può essere qualsiasi cosa (lista, oggetto, ecc.)
     }
 }
 /*
@@ -12,7 +12,7 @@
  var response = new ApiResponse<List<DoctorViewModel>>
 {
     Status = "OK",
-    Data = doctorsList
+    doctorsList
 };
 
 * Esempio Dottori: lista di dottori passata

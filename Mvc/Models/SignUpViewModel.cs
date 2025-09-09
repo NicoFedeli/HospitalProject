@@ -1,26 +1,11 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Hospital.Models.Enums;
 
 namespace Hospital.Models
 {
     public enum UserRole { Patient, Nurse, Doctor }
-    public enum Department
-    {
-        Cardiology,
-        Neurology,
-        Pediatrics,
-        Emergency,
-        General
-    }
-
-    public enum Speciality
-    {
-        Surgeon,
-        Cardiologist,
-        Neurologist,
-        Pediatrician,
-        GeneralPractitioner
-    }
+    
 
 
     // Campi comuni per tutti i ruoli

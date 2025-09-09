@@ -111,7 +111,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new DoctorResponse()
                             {
                                 Status = "OK",
-                                Doctors = doctors
+                                Data = doctors
                             });
                         }
                         else
@@ -166,8 +166,9 @@ namespace HospitalAPI.Controllers
                             return Ok(new DoctorResponse()
                             {
                                 Status = "OK",
-                                Doctors = doctors
+                                Data = doctors
                             });
+
                         }
                         else
                             return BadRequest(new GetResponse()
@@ -220,7 +221,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new NurseResponse()
                             {
                                 Status = "OK",
-                                Nurses = nurses
+                                Data = nurses
                             });
                         }
                         else
@@ -461,7 +462,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new NurseResponse()
                             {
                                 Status = "OK",
-                                Nurses = nurses
+                                Data = nurses
                             });
                         }
                         else
@@ -515,7 +516,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new NurseResponse()
                             {
                                 Status = "OK",
-                                Nurses = nurses
+                                Data = nurses
                             });
                         }
                         else
@@ -570,7 +571,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new DoctorResponse()
                             {
                                 Status = "OK",
-                                Doctors = doctors
+                                Data = doctors 
                             });
                         }
                         else
@@ -810,7 +811,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new PatientResponse()
                             {
                                 Status = "OK",
-                                Patients = patients
+                                Data= patients
                             });
                         }
                         else
@@ -930,7 +931,6 @@ namespace HospitalAPI.Controllers
                             return BadRequest(new ResponsePostCreateUser()
                             {
                                 Status = "KO",
-                                Username = patient.Username,
                                 Message = $"{patient.Username} already exists in our database"
                             });
 
@@ -1002,7 +1002,7 @@ namespace HospitalAPI.Controllers
                         return Ok(new GetResponse()
                         {
                             Status = "OK",
-                            Message = $"Patient {patientId} successfully deleted "
+                            Message = $"Patient {patientId} successfully deleted"
                         });
                     }
                     catch (Exception ex)
@@ -1059,7 +1059,7 @@ namespace HospitalAPI.Controllers
                                 Id = patient.ID,
                                 Username = patient.Username,
                                 Role = "Patient",
-                                Token = "Bearer " + token
+                                Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                             }
                         });
                     }
@@ -1076,7 +1076,7 @@ namespace HospitalAPI.Controllers
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "AdminNurse",
-                            Token = "Bearer " + token
+                            Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                         }
                     });
                 }
@@ -1092,7 +1092,7 @@ namespace HospitalAPI.Controllers
                             Id = nurse.ID,
                             Username = nurse.Username,
                             Role = "Nurse",
-                            Token = "Bearer " + token
+                            Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                         }
                     });
                 }
@@ -1109,7 +1109,7 @@ namespace HospitalAPI.Controllers
                         Id = doctor.ID,
                         Username = doctor.Username,
                         Role = "DoctorAdmin",
-                        Token = "Bearer " + token
+                        Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                     }
                 });
             }
@@ -1124,7 +1124,7 @@ namespace HospitalAPI.Controllers
                         Id = doctor.ID,
                         Username = doctor.Username,
                         Role = "Doctor",
-                        Token = "Bearer " + token
+                        Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                     }
                 });
             }

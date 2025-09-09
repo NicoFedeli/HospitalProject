@@ -36,7 +36,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new RecordResponse()
                             {
                                 Status = "OK",
-                                Records = records.ToList()
+                                Data = records.ToList()
                             });
                         }
                         else
@@ -88,7 +88,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new RecordResponse()
                             {
                                 Status = "OK",
-                                Records = records.ToList()
+                                Data = records.ToList()
                             });
                         }
                         else
@@ -152,7 +152,7 @@ namespace HospitalAPI.Controllers
                                 return Ok(new RecordResponse()
                                 {
                                     Status = "OK",
-                                    Records = rightRecords
+                                    Data = rightRecords
                                 });
                             else
                                 return BadRequest(new GetResponse()
@@ -211,7 +211,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new RecordResponse()
                             {
                                 Status = "OK",
-                                Records = records.ToList()
+                                Data = records.ToList()
                             });
                         }
                         else
@@ -274,7 +274,7 @@ namespace HospitalAPI.Controllers
                                 return Ok(new RecordResponse()
                                 {
                                     Status = "OK",
-                                    Records = rightRecords
+                                    Data = rightRecords
                                 });
                             else
                                 return BadRequest(new GetResponse()

@@ -29,7 +29,8 @@ namespace Hospital.Controllers
         // ✅ Login
         // POST: /User/Login
         [HttpPost]
-        //[ValidateAntiForgeryToken] da capire a che cosa può servire
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken] // da capire a che cosa può servire
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -44,8 +45,8 @@ namespace Hospital.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, response.Data.Id.ToString()),
                     new Claim(ClaimTypes.Name, response.Data.Username),
-                    new Claim(ClaimTypes.Role, response.Data.Role), // es: Doctor, Nurse, Patient
-                    //new Claim("Token", response.Data.Token)) // custom claim per il token  . DEVO FARLO COSì????? 
+                    new Claim(ClaimTypes.Role, response.Data.Role), // Doctor, Nurse, Patient
+                    new Claim("Token", response.Data.Token) // custom claim per il token
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -54,6 +55,8 @@ namespace Hospital.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity)
                 );
+                // Verifica (solo per debug)
+                var isAuth = HttpContext.User.Identity.IsAuthenticated; // deve essere true
 
                 TempData["SuccessTitle"] = "Login successful";
                 TempData["SuccessMessage"] = $"Welcome back, {model.Username}!";
@@ -76,6 +79,7 @@ namespace Hospital.Controllers
         // ✅ Signup
         // POST: /User/SignUp
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken] // Genera un token (___RequestVerificationToken) automaticamente in ogni form protetto da esso. Protegge da CSRF
         public async Task<IActionResult> SignUp(SignUpViewModel vm)
         {

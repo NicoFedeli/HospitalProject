@@ -34,7 +34,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new BillResponse()
                             {
                                 Status = "OK",
-                                Bills = bills.ToList()
+                                Data = bills.ToList()
                             });
                         }
                         else
@@ -86,7 +86,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new BillResponse()
                             {
                                 Status = "OK",
-                                Bills = bills.ToList()
+                                Data = bills.ToList()
                             });
                         }
                         else
@@ -139,7 +139,7 @@ namespace HospitalAPI.Controllers
                             return Ok(new BillResponse()
                             {
                                 Status = "OK",
-                                Bills = bills.ToList()
+                                Data = bills.ToList()
                             });
                         }
                         else

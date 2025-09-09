@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Hospital.Models.Enums;
 
 namespace Hospital.Models.Nurse
 {

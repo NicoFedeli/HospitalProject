@@ -15,11 +15,19 @@ namespace Hospital.Models.Appointment
         [Display(Name = "Patient Name")]
         public string PatientName { get; set; } // Mostrato solo a schermo
 
+        [Display(Name = "ID Nurse")]
+        public int? IDNurse { get; set; } // opzionale
+
+        [Display(Name = "Nurse Username")]
+        public string? NurseName { get; set; } // opzionale
+
         [Display(Name = "ID Doctor")]
         public int IDDoctor { get; set; }
 
         [Display(Name = "Doctor Name")]
         public string DoctorName { get; set; } // Mostrato solo a schermo
+        [Display(Name = "Department")]
+        public string Department { get; set; }
 
         [Display(Name = "Date and Time")]
         public DateTime Date { get; set; }
