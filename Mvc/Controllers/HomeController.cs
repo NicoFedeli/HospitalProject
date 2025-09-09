@@ -4,6 +4,8 @@ using Hospital.Models;
 using Hospital.Models.Appointment;
 using Hospital.Models.Bill;
 using Hospital.Models.Doctor;
+using Hospital.Models.Nurse;
+using Hospital.Models.Patient;
 using Hospital.Models.Home;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,8 @@ namespace Hospital.Controllers
             _api = api;
         }
 
+        // GET: /Home/
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -36,13 +40,17 @@ namespace Hospital.Controllers
                 case "DoctorAdmin":
                 case "Nurse":
                 case "NurseAdmin":
-                    // Totale dottori nel dipartimento
-                    ApiResponse<List<DoctorViewModel>> doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDepartmentDoctors", new { doctorId = userId});
+                    // Totale dottori 
+                    var doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
                     model.TotalDoctors = doctors.Data?.Count ?? 0;
 
-                    // Totale infermieri nel dipartimento
-                    var nurses = await _api.GetAsync<List<UserViewModel>>("api/User/GetAllDepartmentNurseFromDoctor", new { doctorId = userId });
+                    // Totale infermieri
+                    var nurses = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
                     model.TotalNurses = nurses.Data?.Count ?? 0;
+
+                    // Totale pazienti 
+                    var patients = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                    model.TotalPatients = patients.Data?.Count ?? 0;
 
                     // Appuntamenti del dottore
                     var appointments = await _api.GetAsync<List<AppointmentViewModel>>("api/appointment/GetAllDoctorAppointments", new {doctorId = userId});

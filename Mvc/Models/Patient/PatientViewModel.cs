@@ -12,7 +12,7 @@ namespace Hospital.Models.Patient
         [DisplayName("Surname")]
         public string Surname { get; set; }
 
-        [DisplayName("Usernae")]
+        [DisplayName("Username")]
         public string Username { get; set; }
 
         [DisplayName("Age")]
