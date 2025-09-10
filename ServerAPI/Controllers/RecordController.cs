@@ -340,6 +340,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //non ho messo controlli sugli id perche vengono gia fatti lato db avendo inserito foreign key
                             context.records.Add(record);
                             context.SaveChanges();
                             transaction.Commit();
@@ -450,6 +451,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //NON ESISTE UNA DELETE PERCHE LE CARTELLE CLINICHE RIMANGONO PER AVERE LO STORICO 
         private static void NewRecord(Record record, Record oldRecord)
         {
             oldRecord.Prescription = record.Prescription;

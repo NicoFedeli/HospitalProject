@@ -670,6 +670,7 @@ namespace HospitalAPI.Controllers
                             //sostituisco i valori nuovi ai vecchi
                             NewAppointment(appointment, oldAppointment);
 
+                            //non eseguo controlli su id perche lato db ho le foreign key e anche i dottori/infermieri/pazienti possono essere cambiati
                             context.SaveChanges();
                             transaction.Commit();
                             return Ok(new GetResponse()

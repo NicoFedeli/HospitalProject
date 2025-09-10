@@ -280,6 +280,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che lo username non esista gia su db
                             var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
                             if (alreadyExist)
                                 return BadRequest(new ResponsePostCreateUser()
@@ -341,6 +342,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che esista il dottore che si sta provando a modificare tramite l'id
                             var oldDoctor = context.doctors.FirstOrDefault(x => x.ID == doctor.ID);
                             if (oldDoctor == null)
                                 return BadRequest(new GetResponse()
@@ -349,6 +351,7 @@ namespace HospitalAPI.Controllers
                                     Message = $"No nurse found with id {doctor.ID}"
                                 });
 
+                            //controllo che il nuovo username inserito non esista gia sul db
                             var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
                             if (alreadyExist)
                                 return BadRequest(new GetResponse()
@@ -358,7 +361,7 @@ namespace HospitalAPI.Controllers
                                 });
 
                             //vado ad aggiornare i campi del vecchio dottore con quelli del nuovo
-                            ModifyDoc(doctor, oldDoctor);
+                            NewDoc(doctor, oldDoctor);
 
                             context.SaveChanges();
                             transaction.Commit();
@@ -702,6 +705,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che l'infermiera da modificare ci sia gia su db
                             var oldNurse = context.nurses.FirstOrDefault(x => x.ID == nurse.ID);
                             if (oldNurse == null)
                                 return BadRequest(new GetResponse()
@@ -710,6 +714,7 @@ namespace HospitalAPI.Controllers
                                     Message = $"No nurse found with id {nurse.ID}"
                                 });
 
+                            //controllo che il nuovo username non sia gia presente su db
                             var alreadyExist = UsernameAlreadyExist(context, nurse.Username);
                             if (alreadyExist)
                                 return BadRequest(new ResponsePostCreateUser()
@@ -718,6 +723,7 @@ namespace HospitalAPI.Controllers
                                     Message = $"{nurse.Username} already exists in our database"
                                 });
 
+                            //Scambio i valori nuovi ai vecchi
                             NewNurse(nurse, oldNurse);
                             context.SaveChanges();
                             transaction.Commit();
@@ -772,6 +778,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che l'infermiera da eliminare esista sul db
                             var oldNurse = context.nurses.FirstOrDefault(x => x.ID == nurseId);
                             if (oldNurse == null)
                                 return BadRequest(new GetResponse()
@@ -949,6 +956,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che il paziente da modificare esista
                             var oldPatient = context.patients.FirstOrDefault(x => x.ID == patient.ID);
                             if (oldPatient == null)
                                 return BadRequest(new GetResponse()
@@ -956,6 +964,7 @@ namespace HospitalAPI.Controllers
                                     Status = "KO",
                                     Message = $"No nurse found with id {patient.ID}"
                                 });
+                            //controllo che il nuovo username non sia gia stato scelto
                             var alreadyExist = UsernameAlreadyExist(context, patient.Username);
                             if (alreadyExist)
                                 return BadRequest(new ResponsePostCreateUser()
@@ -963,7 +972,7 @@ namespace HospitalAPI.Controllers
                                     Status = "KO",
                                     Message = $"{patient.Username} already exists in our database"
                                 });
-
+                            //scambio i valori del vecchio paziente col nuovo
                             NewPatient(patient, oldPatient);
 
                             context.SaveChanges();
@@ -1019,6 +1028,7 @@ namespace HospitalAPI.Controllers
                     {
                         try
                         {
+                            //controllo che esista il paziente che si vuole eliminare
                             var oldPatient = context.patients.FirstOrDefault(x => x.ID == patientId);
                             if (oldPatient == null)
                                 return BadRequest(new GetResponse()
@@ -1192,7 +1202,7 @@ namespace HospitalAPI.Controllers
             var rightDepartment = nurse?.Department;
             return rightDepartment;
         }
-        private static void ModifyDoc(Doctor doctor, Doctor oldDoctor)
+        private static void NewDoc(Doctor doctor, Doctor oldDoctor)
         {
             oldDoctor.Name = doctor.Name;
             oldDoctor.Surname = doctor.Surname;
