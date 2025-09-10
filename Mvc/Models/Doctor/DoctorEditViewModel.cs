@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Hospital.Models.Enums;
+using Hospital.Models.Constant;
 
 namespace Hospital.Models.Doctor
 {
@@ -25,7 +25,8 @@ namespace Hospital.Models.Doctor
             [Required(ErrorMessage = "Speciality is required")]
             [StringLength(50)]
             [DisplayName("Speciality")]
-            public Speciality? Speciality { get; set; }
+            [SpecialityValidation(ErrorMessage = "Invalid speciality")]
+            public string Speciality { get; set; }
 
             [Required(ErrorMessage = "Username is required")]
             [StringLength(20)]
@@ -45,11 +46,10 @@ namespace Hospital.Models.Doctor
 
             [Required(ErrorMessage = "Department is required")]
             [StringLength(50)]
-            [DisplayName("Department")]
-            public Department? Department { get; set; }
+            [Display(Name = "Department")]
+            [DepartmentValidation(ErrorMessage = "Invalid department")]
+            public string Department { get; set; }
 
-            [DisplayName("Is Primary Doctor?")]
-            public bool Admin { get; set; }
         }
 
     }

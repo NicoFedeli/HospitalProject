@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hospital.Models.Enums;
+using Hospital.Models.Constant;
 
 namespace Hospital.Models.Nurse
 {
@@ -38,7 +38,9 @@ namespace Hospital.Models.Nurse
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
         [Display(Name = "Department")]
-        public Department? Department { get; set; }
+        [DepartmentValidation(ErrorMessage = "Invalid department")]
+        public string Department { get; set; }
+
 
         [Display(Name = "Is Primary Nurse?")] // Traduzione da migliorare
         public bool Admin { get; set; }

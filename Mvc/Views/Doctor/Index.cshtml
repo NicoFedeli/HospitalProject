@@ -1,21 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Total Doctors";
 }
-@using Hospital.Models.Enums;
+@using Hospital.Helpers;
 @* @model Hospital.Models.Doctor.DoctorViewModel *@
 
 @model List<Hospital.Models.Doctor.DoctorViewModel>
 @* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
 @{
-    var departmentColors = new Dictionary<Department, string>
-    {
-        { Department.Cardiology, "bg-danger" },      // rosso
-        { Department.Neurology, "bg-primary" },      // blu
-        { Department.Pediatrics, "bg-warning" },     // giallo
-        { Department.Emergency, "bg-success" },      // verde
-        { Department.General, "bg-info" }            // azzurro
-    };
+    var departmentColors = DepartmentHelper.GetDepartmentColors();
+    var departments = DepartmentHelper.GetDepartmentList().Select(d => d.Value);
 }
+
 
 
 <!DOCTYPE html>
@@ -95,8 +90,8 @@
                                             <td>@doctor.Surname</td>
                                             <td>@doctor.Username</td>
                                             <td>
-                                                <span class="badge @(doctor.Department.HasValue? departmentColors[doctor.Department.Value] : "bg-secondary") "
-                                                    style="font-size: 0.9rem; padding: 0.4em 0.8em; border-radius: 0.25rem; letter-spacing: 0.5px;">
+                                                <span class="badge @(string.IsNullOrEmpty(doctor.Department) ? "bg-secondary" : departmentColors[doctor.Department])
+                                                      style="font-size: 0.9rem; padding: 0.4em 0.8em; border-radius: 0.25rem; letter-spacing: 0.5px;">
                                                     @doctor.Department
                                                 </span>
                                             </td>

@@ -41,5 +41,35 @@ namespace Hospital.Controllers
             // Passo la lista di dottori
             return View(response.Data);
         }
+
+        // GET: /Doctor/Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;  
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+
+
+            var response = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+
+
+            if (response == null || response.Data == null)
+            {
+                TempData["ErrorTitle"] = "Error during data fetching.";
+                TempData["ErrorMessage"] = "Unable to fetch doctors at the moment. Please try again later.";
+                return View(new List<DoctorViewModel>());
+            }
+
+            var model = new DoctorEditPageViewModel
+            {
+                Doctors = response.Data
+            };
+
+            return View(model);
+        }
     }
 }

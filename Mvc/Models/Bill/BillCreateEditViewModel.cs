@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Hospital.Models.Enums;
+using Hospital.Models.Constant;
 
 namespace Hospital.Models.Bill
 {
@@ -20,9 +20,9 @@ namespace Hospital.Models.Bill
         public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Status is required")]
-        [EnumDataType(typeof(BillStatus), ErrorMessage = "Invalid status")]
         [Display(Name = "Status")]
-        public BillStatus Status { get; set; }
+        [BillStatusValidation(ErrorMessage = "Invalid status")]
+        public string Status { get; set; }
 
         // Dropdown support
         public List<SelectListItem> Patients { get; set; } = new List<SelectListItem>();

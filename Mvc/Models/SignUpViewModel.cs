@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Hospital.Models.Enums;
+using Hospital.Models.Constant;
 
 namespace Hospital.Models
 {
@@ -60,10 +60,13 @@ namespace Hospital.Models
         [Phone]
         [DisplayName("Phone")]
         public string Phone { get; set; }
+
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
-        [DisplayName("Department")]
-        public Department? Department { get; set; }
+        [Display(Name = "Department")]
+        [DepartmentValidation(ErrorMessage = "Invalid department")]
+        public string Department { get; set; }
+
         // Lascio di default false, mostro comuqnque la checkbox in view per mostrare nel caso l'admin la voglia settare 
         // In produzione, solo un admin può settare un altro admin
         [DisplayName("Is Primary Nurse?")]
@@ -79,13 +82,17 @@ namespace Hospital.Models
 
         [Required(ErrorMessage = "Department is required")]
         [StringLength(50)]
-        [DisplayName("Department")]
-        public Department? Department { get; set; }
-        
+        [Display(Name = "Department")]
+        [DepartmentValidation(ErrorMessage = "Invalid department")]
+        public string Department { get; set; }
+
+
         [Required(ErrorMessage = "Speciality is required")]
         [StringLength(50)]
         [DisplayName("Speciality")]
-        public Speciality? Speciality { get; set; }
+        [SpecialityValidation(ErrorMessage = "Invalid speciality")]
+        public string Speciality { get; set; }
+
 
         // Lascio di default false, mostro comuqnque la checkbox in view per mostrare nel caso l'admin la voglia settare 
         // In produzione, solo un admin può settare un altro admin

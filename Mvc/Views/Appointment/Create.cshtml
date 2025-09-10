@@ -2,22 +2,15 @@
     ViewData["Title"] = "Create Appointment";
 }
 @* Prendo i campi dei department *@
-@using Hospital.Models.Enums;
+@using Hospital.Helpers;
 @using Newtonsoft.Json; @* Per serializzare in JSON *@
 @model Hospital.Models.Appointment.CreateAppointmentViewModel;
 @* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
 @{
-    var departmentColors = new Dictionary<Department, string>
-    {
-        { Department.Cardiology, "bg-danger" },      // rosso
-        { Department.Neurology, "bg-primary" },      // blu
-        { Department.Pediatrics, "bg-warning" },     // giallo
-        { Department.Emergency, "bg-success" },      // verde
-        { Department.General, "bg-info" }            // azzurro
-    };
-
-    var departments = Enum.GetValues(typeof(Department)).Cast<Department>();
+    var departmentColors = DepartmentHelper.GetDepartmentColors();
+    var departments = DepartmentHelper.GetDepartmentList().Select(d => d.Value);
 }
+
 
 <head>
     <!-- Font Awesome (icone) -->

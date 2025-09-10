@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Hospital.Models.Doctor;
+using Hospital.Models.Constant;
 using Hospital.Models.Nurse;
 using Hospital.Models.Patient;
 using Hospital.Models.ValidationAttributes;
@@ -30,20 +31,12 @@ namespace Hospital.Models.Appointment
         [FutureDate(ErrorMessage = "The appointment date must be in the future")]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Department")]
         [Required(ErrorMessage = "Department is required")]
-        [ValidDepartment(ErrorMessage = "Dipartimento non valido. Valori ammessi: Cardiology, Neurology, Pediatrics, Emergency, General")]
+        [StringLength(50)]
+        [Display(Name = "Department")]
+        [DepartmentValidation(ErrorMessage = "Invalid department")]
         public string Department { get; set; }
-    }
 
-
-    public class ValidDepartmentAttribute : ValidationAttribute
-    {
-        public override bool IsValid(object value)
-        {
-            if (value == null) return false;
-            return Enum.GetNames(typeof(Models.Enums.Department)).Contains(value.ToString());
-        }
     }
 
 

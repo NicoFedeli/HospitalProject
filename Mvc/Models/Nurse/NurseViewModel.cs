@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hospital.Models.Enums;
 
 namespace Hospital.Models.Nurse
 {
@@ -20,6 +19,6 @@ namespace Hospital.Models.Nurse
         public string Phone { get; set; }
 
         [Display(Name = "Department")]
-        public Department? Department { get; set; }
+        public string Department { get; set; }
     }
 }
