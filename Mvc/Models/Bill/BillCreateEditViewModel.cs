@@ -1,14 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Hospital.Models.Enums;
 
 namespace Hospital.Models.Bill
 {
-    public enum PaymentStatus
-    {
-        Pending,
-        Paid,
-        Cancelled
-    }
     public class BillCreateEditViewModel
     {
         [Display(Name = "ID Payment")]
@@ -25,9 +20,9 @@ namespace Hospital.Models.Bill
         public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Status is required")]
-        [EnumDataType(typeof(PaymentStatus), ErrorMessage = "Invalid status")]
+        [EnumDataType(typeof(BillStatus), ErrorMessage = "Invalid status")]
         [Display(Name = "Status")]
-        public PaymentStatus Status { get; set; }
+        public BillStatus Status { get; set; }
 
         // Dropdown support
         public List<SelectListItem> Patients { get; set; } = new List<SelectListItem>();

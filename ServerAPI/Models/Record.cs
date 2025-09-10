@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalAPI.Models
 {
-    [Table("Appointment")]
+    [Table("Record")]
 
-    public class Appointment
+    public class Record
     {
         [Key]
         public int ID { get; set; }
@@ -13,12 +13,10 @@ namespace HospitalAPI.Models
         public int IDPatient { get; set; }
         [Required]
         public int IDDoctor { get; set; }
-        public int? IDNurse {get; set; } // l'infermiera può non servire durante l'appuntamento
         [Required]
-        public DateTime Date { get; set; }
-        [Required]
-        // Campi da compilare una volta finita l'appuntamento
-        public string Department { get; set; }
-
+        public int IDNurse { get; set; }
+        public string Diagnosis { get; set; }
+        public string Prescription { get; set; }
+        public string Treatment { get; set; }
     }
 }

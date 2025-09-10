@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Hospital.Models;
 using Microsoft.AspNetCore.WebUtilities;
@@ -10,6 +11,8 @@ public interface IApiHelper
     Task<ApiResponse<T>> PostAsync<T>(string relativeUrl, object? data=null);
     Task<ApiResponse<T>> PutAsync<T>(string relativeUrl, object? data=null);
     Task<ApiResponse<T>> DeleteAsync<T>(string relativeUrl);
+    Task<ApiResponse<T>> PatchAsync<T>(string relativeUrl, object data);
+
 }
 
 public class ApiHelper : IApiHelper
@@ -74,7 +77,6 @@ public class ApiHelper : IApiHelper
 
     public async Task<ApiResponse<T>> PostAsync<T>(string relativeUrl, object? data)
     {
-        AddAuthorizationHeader(); // Aggiungo l'header di autorizzazione
         var payload = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
         var resp = await _httpClient.PostAsync(relativeUrl, payload);
         var content = await resp.Content.ReadAsStringAsync();
@@ -83,7 +85,6 @@ public class ApiHelper : IApiHelper
 
     public async Task<ApiResponse<T>> PutAsync<T>(string relativeUrl, object? data)
     {
-        AddAuthorizationHeader(); // Aggiungo l'header di autorizzazione
         var payload = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
         var resp = await _httpClient.PutAsync(relativeUrl, payload);
         var content = await resp.Content.ReadAsStringAsync();
@@ -92,9 +93,23 @@ public class ApiHelper : IApiHelper
 
     public async Task<ApiResponse<T>> DeleteAsync<T>(string relativeUrl)
     {
-        AddAuthorizationHeader(); // Aggiungo l'header di autorizzazione
         var resp = await _httpClient.DeleteAsync(relativeUrl);
         var content = await resp.Content.ReadAsStringAsync();
+        return DeserializeApiResponse<T>(content, resp.IsSuccessStatusCode);
+    }
+
+    public async Task<ApiResponse<T>> PatchAsync<T>(string url, object data)
+    {
+        // Creazione della richiesta PATCH
+        var request = new HttpRequestMessage(HttpMethod.Patch, url)
+        {
+            Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json")
+        };
+
+        var resp = await _httpClient.SendAsync(request);
+        var content = await resp.Content.ReadAsStringAsync();
+
+        // Deserializza la risposta in ApiResponse<T>
         return DeserializeApiResponse<T>(content, resp.IsSuccessStatusCode);
     }
 
@@ -125,4 +140,5 @@ public class ApiHelper : IApiHelper
             Data = default
         };
     }
+
 }
