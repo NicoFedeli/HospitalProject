@@ -76,6 +76,7 @@
                                 <th>Diagnosis</th>
                                 <th>Treatment</th>
                                 <th>Presciprion</th>
+                                <th>Actions</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -89,6 +90,23 @@
                                     <td>@record.Diagnosis</td>
                                     <td>@record.Treatment</td>
                                     <td>@record.Prescription</td>
+                                    <td>
+                                        @* In questo modo vado in una nuova pagina e ho già i dati senza dover richiamare il db *@
+                                        <form asp-action="Edit" asp-controller="Record" method="post" style="display:inline;">
+                                            <input type="hidden" name="ID" value="@record.ID" />
+                                            <input type="hidden" name="IDPatient" value="@record.IDPatient" />
+                                            <input type="hidden" name="PatientName" value="@record.PatientName" />
+                                            <input type="hidden" name="IDDoctor" value="@record.IDDoctor" />
+                                            <input type="hidden" name="DoctorName" value="@record.DoctorName" />
+                                            <input type="hidden" name="IDNurse" value="@record.IDNurse" />
+                                            <input type="hidden" name="NurseName" value="@record.NurseName" />
+                                            <input type="hidden" name="Diagnosis" value="@record.Diagnosis" />
+                                            <input type="hidden" name="Prescription" value="@record.Prescription" />
+                                            <input type="hidden" name="Treatment" value="@record.Treatment" />
+                                            <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                                        </form>
+                                    </td>
+
                                 </tr>
                             }
                         </tbody>

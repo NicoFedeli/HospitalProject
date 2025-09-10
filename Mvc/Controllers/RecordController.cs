@@ -31,28 +31,51 @@ namespace Hospital.Controllers
         }
 
 
-        // POST: /Record/
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Records(RecordsPageViewModel model)
-        //{
-        //    // Ricarico pazienti per la select
-        //    var patientsResponse = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
-        //    model.Patients = patientsResponse?.Data ?? new List<PatientViewModel>();
+        // POST: /Record/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(RecordCreateEditViewModel editRecord)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorTitle"] = "Validation Error";
+                TempData["ErrorMessage"] = "Invalid form data.";
+                return View(editRecord);
+            }
 
-        //    if (model.SelectedPatientId <= 0)
-        //    {
-        //        TempData["ErrorTitle"] = "No Patient Selected";
-        //        TempData["ErrorMessage"] = "Please select a valid patient.";
-        //        return View(model);
-        //    }
+            // A questo punto puoi mostrare la pagina con i campi modificabili
+            return View(editRecord);
+        }
 
-        //    // Chiamata per ottenere i record del paziente selezionato
-        //    var recordsResponse = await _api.GetAsync<List<RecordViewModel>>($"api/User/GetRecordsByPatient/{model.SelectedPatientId}");
-        //    model.Records = recordsResponse?.Data ?? new List<RecordViewModel>();
 
-        //    return View(model);
-        //}
+        // POST: /Record/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditRecord(RecordCreateEditViewModel editRecord)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Se ci sono errori, il form viene ricaricato con EditedRecord
+                // e Record rimane invariato per riferimento
+                TempData["ErrorTitle"] = "Validation Error";
+                TempData["ErrorMessage"] = "Invalid form data.";
+                return RedirectToAction("Index", "Record");
+            }
+
+            // Chiamata API o DB per salvare EditedRecord
+            var response = _api.PutAsync<RecordViewModel>("api/Record/ModifyRecord", editRecord).Result;
+
+            if (response.Status == "OK")
+            {
+                TempData["SuccessTitle"] = "Record updated successfully!";
+                TempData["SuccessMessage"] = $"Record ID {editRecord.ID} updated successfully.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["ErrorTitle"] = "Error updating record.";
+            TempData["ErrorMessage"] = response.Message ?? "Failed to update record.";
+            return RedirectToAction("Index", "Record");
+        }
 
 
         // GET: /Record/Create
@@ -61,6 +84,7 @@ namespace Hospital.Controllers
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("LogIn", "User");
@@ -68,96 +92,72 @@ namespace Hospital.Controllers
 
             var model = new CreateRecordsViewModel();
 
-            try
-            {
-                // Recupero i dottori
-                var doctorsResponse = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
-                model.Doctors = doctorsResponse.Status == "OK" ? doctorsResponse.Data ?? new List<DoctorViewModel>() : new List<DoctorViewModel>();
+            // Popolo i pazienti
+            var patientsResp = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+            model.Patients = patientsResp?.Data ?? new List<PatientViewModel>();
 
-                // Recupero le infermiere
-                var nursesResponse = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
-                model.Nurses = nursesResponse.Status == "OK" ? nursesResponse.Data ?? new List<NurseViewModel>() : new List<NurseViewModel>();
+            // Popolo i dottori
+            var doctorsResp = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+            model.Doctors = doctorsResp?.Data ?? new List<DoctorViewModel>();
 
-                // Recupero i pazienti
-                var patientsResponse = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
-                model.Patients = patientsResponse.Status == "OK" ? patientsResponse.Data ?? new List<PatientViewModel>() : new List<PatientViewModel>();
-            }
-            catch (Exception ex)
-            {
-                // In caso di errore imprevisto, mostro un messaggio
-                TempData["ErrorTitle"] = "Error during data fetching.";
-                TempData["ErrorMessage"] = ex.Message;
-                Console.WriteLine($"[AppointmentController.Create] Errore: {ex.Message}");
+            // Popolo gli infermieri
+            var nursesResp = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+            model.Nurses = nursesResp?.Data ?? new List<NurseViewModel>();
 
-                // Evito crash e passo un modello vuoto
-                return View();
-            }
-
+            // Record vuoto pronto per il form
+            model.Record = new RecordCreateEditViewModel();
 
             return View(model);
         }
 
-        //// POST: /Record/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(RecordCreateEditViewModel record)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var fullModel = await BuildCreateViewModel(record);
-        //        TempData["ErrorTitle"] = "Invalid Form";
-        //        TempData["ErrorMessage"] = "Please correct the errors in the form.";
-        //        return View(fullModel);
-        //    }
 
-        //    try
-        //    {
-        //        var response = await _api.PostAsync<RecordCreateEditViewModel>("api/Record/CreateRecord", record);
+        // POST: /Record/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateRecordsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Ricarico le liste per ricreare i select
+                var patientsResp = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patientsResp?.Data ?? new List<PatientViewModel>();
 
-        //        if (response.Status == "OK")
-        //        {
-        //            TempData["SuccessTitle"] = "record created successfully!";
-        //            TempData["SuccessMessage"] = $"record ID {response.Data?.ID} created.";
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        else
-        //        {
-        //            var fullModel = await BuildCreateViewModel(record);
-        //            TempData["ErrorTitle"] = "Error creating record.";
-        //            TempData["ErrorMessage"] = response.Message ?? "Failed to create record.";
-        //            return View(fullModel);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var fullModel = await BuildCreateViewModel(record);
-        //        TempData["ErrorTitle"] = "Unexpected error while creating the record.";
-        //        TempData["ErrorMessage"] = ex.Message;
-        //        return View(fullModel);
-        //    }
-        //}
+                var doctorsResp = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctorsResp?.Data ?? new List<DoctorViewModel>();
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Records(RecordsPageViewModel model)
-        //{
-        //    // Ricarico pazienti per la select
-        //    var patientsResponse = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
-        //    model.Patients = patientsResponse?.Data ?? new List<PatientViewModel>();
+                var nursesResp = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nursesResp?.Data ?? new List<NurseViewModel>();
 
-        //    if (model.SelectedPatientId <= 0)
-        //    {
-        //        TempData["ErrorTitle"] = "No Patient Selected";
-        //        TempData["ErrorMessage"] = "Please select a valid patient.";
-        //        return View(model);
-        //    }
+                return View(model);
+            }
 
-        //    // Chiamata per ottenere i record del paziente selezionato
-        //    var recordsResponse = await _api.GetAsync<List<RecordViewModel>>($"api/User/GetRecordsByPatient/{model.SelectedPatientId}");
-        //    model.Records = recordsResponse?.Data ?? new List<RecordViewModel>();
+            // Chiamo API per creare il record
+            var response = await _api.PostAsync<RecordCreateEditViewModel>("api/Record/CreateRecord", model.Record);
 
-        //    return View(model);
-        //}
+            if (response.Status == "OK")
+            {
+                TempData["SuccessTitle"] = "Record created successfully!";
+                TempData["SuccessMessage"] = $"Record ID {response.Data?.ID} created.";
+                return RedirectToAction("Index", "Record");
+            }
+            else
+            {
+                TempData["ErrorTitle"] = "Error creating record";
+                TempData["ErrorMessage"] = response.Message ?? "Failed to create record.";
+
+                // Ricarico le liste in caso di errore
+                var patientsResp = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patientsResp?.Data ?? new List<PatientViewModel>();
+
+                var doctorsResp = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctorsResp?.Data ?? new List<DoctorViewModel>();
+
+                var nursesResp = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nursesResp?.Data ?? new List<NurseViewModel>();
+
+                return View(model);
+            }
+        }
 
     }
 }

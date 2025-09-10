@@ -59,10 +59,8 @@ namespace Hospital.Models.Record
         //Lista Infermieri per la tendina
         public List<NurseViewModel> Nurses { get; set; } = new();
 
-        // Lista dei record del paziente selezionato
-        public List<RecordViewModel> Records { get; set; } = new();
-
-        // ID paziente selezionato
-        public int SelectedPatientId { get; set; }
+        // Record del paziente selezionato
+        public RecordCreateEditViewModel Record { get; set; }
     }
+
 }

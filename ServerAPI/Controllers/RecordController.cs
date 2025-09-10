@@ -530,8 +530,8 @@ namespace HospitalAPI.Controllers
                                 });
                             else
                             {
-                                //controllo che gli id dei dottori e infermiere non sia cambiato per evitare manomissioni alle cartelle cliniche
-                                if ((oldRecord.IDDoctor != record.IDDoctor) || (oldRecord.IDNurse != record.IDNurse))
+                                //controllo che gli id del dottore, infermiere e paziente non sia cambiato per evitare manomissioni alle cartelle cliniche
+                                if ((oldRecord.IDDoctor != record.IDDoctor) || (oldRecord.IDNurse != record.IDNurse) || (oldRecord.IDPatient != record.IDPatient))
                                     return BadRequest(new GetResponse()
                                     {
                                         Status = "KO",

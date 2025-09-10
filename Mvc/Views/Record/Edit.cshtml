@@ -1,0 +1,97 @@
+﻿@model Hospital.Models.Record.RecordCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Record";
+}
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Total Doctors</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">Edit Doctor</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <form asp-action="EditRecord" asp-controller="Record" method="post">
+                    <input type="hidden" asp-for="ID" />
+
+                    <!-- Patient info (readonly) -->
+                    <div class="form-group">
+                        <label>Patient</label>
+                        <input class="form-control" asp-for="PatientName" readonly />
+                    </div>
+
+                    <!-- Doctor info (readonly) -->
+                    <div class="form-group">
+                        <label>Doctor</label>
+                        <input class="form-control" asp-for="DoctorName" readonly />
+                    </div>
+
+                    <!-- Nurse info (readonly) -->
+                    <div class="form-group">
+                        <label>Nurse</label>
+                        <input class="form-control" asp-for="NurseName" readonly />
+                    </div>
+
+                    <input asp-for="IDDoctor" hidden />
+                    <input asp-for="IDPatient" hidden />
+					<input asp-for="IDNurse" hidden />
+
+                    <!-- Editable fields -->
+                    <div class="form-group">
+                        <label asp-for="Diagnosis"></label>
+                        <input asp-for="Diagnosis" class="form-control" />
+                        <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Prescription"></label>
+                        <input asp-for="Prescription" class="form-control" />
+                        <span asp-validation-for="Prescription" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Treatment"></label>
+                        <input asp-for="Treatment" class="form-control" />
+                        <span asp-validation-for="Treatment" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

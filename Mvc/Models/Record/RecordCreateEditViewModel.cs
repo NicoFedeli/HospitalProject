@@ -35,5 +35,15 @@ namespace Hospital.Models.Record
         [StringLength(500, ErrorMessage = "Treatment must be max 500 characters")]
         [Display(Name = "Treatment")]
         public string Treatment { get; set; }
+
+        [Display(Name = "Patient Name")]
+        public string? PatientName { get; set; } // solo per visualizzazione
+
+        [Display(Name = "Doctor Name")]
+        public string? DoctorName { get; set; } // solo per visualizzazione
+
+        [Display(Name = "Nurse Name")]
+        public string? NurseName { get; set; } // solo per visualizzazione
+
     }
 }
