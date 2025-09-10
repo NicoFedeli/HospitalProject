@@ -98,8 +98,15 @@
                     <!-- Username -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Username"></label>
-                        <input asp-for="DoctorToEdit.Username" class="form-control" readonly/>
-                        @* <span asp-validation-for="DoctorToEdit.Username" class="text-danger"></span> *@
+                        <input asp-for="DoctorToEdit.Username" class="form-control"/>
+                        <span asp-validation-for="DoctorToEdit.Username" class="text-danger"></span> 
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label asp-for="DoctorToEdit.Password"></label>
+                        <input asp-for="DoctorToEdit.Password" class="form-control" />
+                        <span asp-validation-for="DoctorToEdit.Password" class="text-danger"></span>
                     </div>
 
                     <!-- Speciality -->

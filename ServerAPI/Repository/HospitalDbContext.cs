@@ -16,8 +16,8 @@ namespace HospitalAPI.Repository
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Connection String lasciate pubbliche, tanto lavoriamo in locale
-            //var connectionString = "Server=localhost;Database=Hospital;User Id=nico;Password=Admin123;TrustServerCertificate=True;"; // NICO
-            var connectionString = "Server=localhost\\SQLEXPRESS;Database=Hospital;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;"; // BERTA
+            var connectionString = "Server=localhost;Database=Hospital;User Id=nico;Password=Admin123;TrustServerCertificate=True;"; // NICO
+            //var connectionString = "Server=localhost\\SQLEXPRESS;Database=Hospital;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;"; // BERTA
 
 
             optionsBuilder.UseSqlServer(connectionString);

@@ -93,7 +93,7 @@ namespace Hospital.Controllers
                 TempData["ErrorMessage"] = "You do not have permission to perform this action.";
                 return RedirectToAction("Edit");
             }
-            var updateResponse = await _api.PutAsync<DoctorCreateViewModel>(
+            var updateResponse = await _api.PutAsync<DoctorEditViewModel>(
                 "api/User/ModifyDoctor",
                 model.DoctorToEdit
             );
