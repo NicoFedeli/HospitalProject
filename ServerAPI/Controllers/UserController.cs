@@ -42,7 +42,7 @@ namespace HospitalAPI.Controllers
               issuer: "IssuerServer",
               audience: "AudienceServer",
               claims: claims,
-              expires: DateTime.UtcNow.AddMinutes(30),
+              expires: DateTime.UtcNow.AddMinutes(60), // 60 minuti
               signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

@@ -36,7 +36,7 @@ namespace Hospital.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            ApiResponse<UserViewModel> response = await _api.PostAsync<UserViewModel>("api/User/Login", model);
+            var response = await _api.PostAsync<UserViewModel>("api/User/Login", model);
 
             if (response.Status == "OK" && response.Data != null)
             {
@@ -53,7 +53,12 @@ namespace Hospital.Controllers
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity)
+                    new ClaimsPrincipal(claimsIdentity),
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true, // <-- Fondamentale per mantenere la sessione anche chiudendo il browser
+                        ExpiresUtc = DateTime.UtcNow.AddMinutes(60) // <-- attivo per 60 minuti
+                    }
                 );
                 // Verifica (solo per debug)
                 var isAuth = HttpContext.User.Identity.IsAuthenticated; // deve essere true

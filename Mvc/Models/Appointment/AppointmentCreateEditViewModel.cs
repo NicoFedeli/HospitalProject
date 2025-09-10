@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Hospital.Models.Doctor;
+using Hospital.Models.Nurse;
+using Hospital.Models.Patient;
 using Hospital.Models.ValidationAttributes;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -16,6 +19,10 @@ namespace Hospital.Models.Appointment
         [Required(ErrorMessage = "Doctor ID is required")]
         [Display(Name = "ID Doctor")]
         public int IDDoctor { get; set; }
+        
+        [Required(ErrorMessage = "Nurse ID is required")]
+        [Display(Name = "ID Nurse")]
+        public int IDNurse { get; set; }
 
         [Required(ErrorMessage = "Date and time are required")]
         [Display(Name = "Date and Time")]
@@ -27,11 +34,6 @@ namespace Hospital.Models.Appointment
         [Required(ErrorMessage = "Department is required")]
         [ValidDepartment(ErrorMessage = "Dipartimento non valido. Valori ammessi: Cardiology, Neurology, Pediatrics, Emergency, General")]
         public string Department { get; set; }
-
-        // Liste di supporto per le dropdown (mostro il nome utente, invio l'id)
-        public List<SelectListItem> Patients { get; set; } = new();
-        public List<SelectListItem> Doctors { get; set; } = new();
-
     }
 
 
@@ -42,5 +44,14 @@ namespace Hospital.Models.Appointment
             if (value == null) return false;
             return Enum.GetNames(typeof(Models.Enums.Department)).Contains(value.ToString());
         }
+    }
+
+
+    public class CreateAppointmentViewModel
+    {
+        public List<PatientViewModel> Patients { get; set; } = new();
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+        public List<NurseViewModel> Nurses { get; set; } = new();
+        public AppointmentCreateEditViewModel Appointment { get; set; } = new();
     }
 }

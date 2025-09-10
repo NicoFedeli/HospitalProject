@@ -14,13 +14,13 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddHttpContextAccessor(); // Per iniettare IHttpContextAccessor in UI/_ToastScripts
-builder.Services.AddDistributedMemoryCache(); // Memoria temporanea per sessione
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Durata sessione
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; // Necessario per GDPR
-});
+//builder.Services.AddDistributedMemoryCache(); // Memoria temporanea per sessione
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromMinutes(30); // Durata sessione
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.IsEssential = true; // Necessario per GDPR
+//});
 
 builder.Services.AddTransient<BearerTokenHandler>(); // aggiundo il BearerTokenHandler come servizio transient (una nuova istanza per ogni richiesta)
 builder.Services.AddHttpClient<IApiHelper, ApiHelper>(client =>
@@ -38,7 +38,7 @@ builder.Services
         o.LoginPath = "/User/LogIn";
         o.LogoutPath = "/User/LogOut";
         o.AccessDeniedPath = "/User/AccessDenied";
-        o.ExpireTimeSpan = TimeSpan.FromMinutes(60*24); // Durata cookie: 1 gg (POI ABBASSARE)
+        o.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Indica il tempo di validità del cookie di autenticazione se il cookie è persistente (IsPersistent=true)
         o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; //altrimenti in localhost senza HTTPS il cookie non viene settato
         //o.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Solo in produzione con HTTPS
     });
@@ -56,7 +56,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession(); // per usare HttpContext
+//app.UseSession(); // per usare HttpContext
 app.UseAuthentication(); // Autenticazione
 app.UseAuthorization(); // Autorizzazione
 

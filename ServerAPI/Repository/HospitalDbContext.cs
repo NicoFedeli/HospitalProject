@@ -13,7 +13,6 @@ namespace HospitalAPI.Repository
         public DbSet<Record> records { get; set; }
 
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Connection String lasciate pubbliche, tanto lavoriamo in locale

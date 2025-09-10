@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "UnPaid Bills";
+}
+
+@model List<Hospital.Models.Bill.BillViewModel>
+
+@using Hospital.Models.Enums;
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Total Bills UnPaid</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">View All UnPaid Bills</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"> Shows all bill paid</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if (!Model.Any())
+                        {
+                            <div class="alert alert-warning">No unpaid bills found.</div>
+                        }
+                        else
+                        {
+                            <table class="table table-striped">
+                                <colgroup>
+                                    <col style="width: 10%">
+                                    <col style="width: 30%">
+                                    <col style="width: 30%">
+                                    <col style="width: 30%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Amount)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Status)</th>
+                                        <th style="width: 10px">Pay Now the Bill</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+									@{
+										int counter = 1;
+									}
+                                    @foreach (var bill in Model)
+                                    {
+                                        <tr>
+											<td>@counter</td>
+                                            <td>€ @bill.Amount</td>
+                                            <td>@bill.Status</td>
+                                            <td>
+                                                <a asp-action="PayBill" asp-controller="Patient" asp-route-id="@bill.ID" class="btn btn-primary btn-sm">
+                                                    Pay Now
+                                                    <i class="fas fa-credit-card"></i> 
+                                                </a>
+                                        </tr>
+										counter++;
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Amount)</th>
+                                        <th>@Html.DisplayNameFor(m => m.First().Status)</th>
+                                        <th style="width: 10px">Pay Now the Bill</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
+</section>

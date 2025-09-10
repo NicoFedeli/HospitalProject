@@ -772,6 +772,7 @@ namespace HospitalAPI.Controllers
         {
             oldAppointment.IDPatient = appointment.IDPatient;
             oldAppointment.IDDoctor = appointment.IDDoctor;
+            oldAppointment.IDNurse = appointment.IDNurse;
             oldAppointment.Department = appointment.Department;
             oldAppointment.Date = appointment.Date;
         }
