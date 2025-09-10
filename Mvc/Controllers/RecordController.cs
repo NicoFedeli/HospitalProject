@@ -63,7 +63,7 @@ namespace Hospital.Controllers
             }
 
             // Chiamata API o DB per salvare EditedRecord
-            var response = _api.PutAsync<RecordViewModel>("api/Record/ModifyRecord", editRecord).Result;
+            var response = _api.PutAsync<RecordViewModel>("api/Record/ModifyRecords", editRecord).Result;
 
             if (response.Status == "OK")
             {

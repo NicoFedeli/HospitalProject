@@ -36,12 +36,6 @@
                     <p>Delete one Doctor</p>
                 </a>
             </li>
-            <li class="nav-item">
-                <a asp-controller="Record" asp-action="Create" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p>Create New Record</p>
-                </a>
-            </li>
         </ul>
     </li>
 }
@@ -96,12 +90,6 @@
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
-                <a asp-controller="Record" asp-action="Index" class="nav-link">
-                    <i class="fas fa-search nav-icon"></i>
-                    <p>shows records from Patient</p>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a asp-controller="Patient" asp-action="Edit" class="nav-link">
                     <i class="fas fa-edit nav-icon"></i>
                     <p>Edit one Patient</p>
@@ -151,4 +139,32 @@
         </ul>
     </li>
 
+}
+
+@if (role == "Doctor" || role == "DoctorAdmin" || role == "Nurse" || role == "NurseAdmin")
+{
+    @* Records *@
+    <li id="menu-appointment" class="nav-item">
+        <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+                Records
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a asp-controller="Record" asp-action="Create" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>Create New Record</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="Record" asp-action="Index" class="nav-link">
+                    <i class="fas fa-search nav-icon"></i>
+                    <p>Show all Records</p>
+				</a>
+            </li>
+        </ul>
+    </li>
 }
