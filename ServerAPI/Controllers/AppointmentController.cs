@@ -43,10 +43,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             }).ToList();
 
                         if (appointments.Any())
@@ -163,10 +160,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             }).ToList();
 
                         if (appointments.Any())
@@ -236,10 +230,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             })
                         .OrderBy(x => x.Date)
                         .ToList();
@@ -312,10 +303,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             })
                         .OrderByDescending(x => x.Date)
                         .ToList();
@@ -387,10 +375,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             }).ToList();
 
 
@@ -460,10 +445,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             }).ToList();
 
                         if (appointments.Any())
@@ -534,10 +516,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             })
                         .OrderBy(x => x.Date)
                         .ToList();
@@ -610,10 +589,7 @@ namespace HospitalAPI.Controllers
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
-                                                Date = a.Date,
-                                                Diagnosis = a.Diagnosis,
-                                                Prescription = a.Prescription,
-                                                Treatment = a.Treatment
+                                                Date = a.Date
                                             })
                         .OrderByDescending(x => x.Date)
                         .ToList();
@@ -681,9 +657,6 @@ namespace HospitalAPI.Controllers
                         oldAppointment.IDDoctor = appointment.IDDoctor;
                         oldAppointment.Department = appointment.Department;
                         oldAppointment.Date = appointment.Date;
-                        oldAppointment.Diagnosis = appointment.Diagnosis;
-                        oldAppointment.Prescription = appointment.Prescription;
-                        oldAppointment.Treatment = appointment.Treatment;
                         
                         context.SaveChanges();
 
