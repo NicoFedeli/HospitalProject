@@ -352,12 +352,22 @@ namespace HospitalAPI.Controllers
                                 });
 
                             //controllo che il nuovo username inserito non esista gia sul db
-                            var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
-                            if (alreadyExist)
+                            if (oldDoctor.Username != doctor.Username)
+                            {
+                                var alreadyExist = UsernameAlreadyExist(context, doctor.Username);
+                                if (alreadyExist)
+                                    return BadRequest(new GetResponse()
+                                    {
+                                        Status = "KO",
+                                        Message = $"{doctor.Username} already exists in our database"
+                                    });
+                            }
+
+                            if(String.IsNullOrEmpty(doctor.Password))
                                 return BadRequest(new GetResponse()
                                 {
                                     Status = "KO",
-                                    Message = $"{doctor.Username} already exists in our database"
+                                    Message = $"Password cannot be null or empty"
                                 });
 
                             //vado ad aggiornare i campi del vecchio dottore con quelli del nuovo
@@ -715,12 +725,23 @@ namespace HospitalAPI.Controllers
                                 });
 
                             //controllo che il nuovo username non sia gia presente su db
-                            var alreadyExist = UsernameAlreadyExist(context, nurse.Username);
-                            if (alreadyExist)
-                                return BadRequest(new ResponsePostCreateUser()
+                            if (oldNurse.Username != nurse.Username)
+                            {
+                                var alreadyExist = UsernameAlreadyExist(context, nurse.Username);
+                                if (alreadyExist)
+                                    return BadRequest(new ResponsePostCreateUser()
+                                    {
+                                        Status = "KO",
+                                        Message = $"{nurse.Username} already exists in our database"
+                                    });
+                            }
+
+
+                            if (String.IsNullOrEmpty(nurse.Password))
+                                return BadRequest(new GetResponse()
                                 {
                                     Status = "KO",
-                                    Message = $"{nurse.Username} already exists in our database"
+                                    Message = $"Password cannot be null or empty"
                                 });
 
                             //Scambio i valori nuovi ai vecchi
@@ -965,13 +986,24 @@ namespace HospitalAPI.Controllers
                                     Message = $"No nurse found with id {patient.ID}"
                                 });
                             //controllo che il nuovo username non sia gia stato scelto
-                            var alreadyExist = UsernameAlreadyExist(context, patient.Username);
-                            if (alreadyExist)
-                                return BadRequest(new ResponsePostCreateUser()
+                            if (oldPatient.Username != patient.Username)
+                            {
+                                var alreadyExist = UsernameAlreadyExist(context, patient.Username);
+                                if (alreadyExist)
+                                    return BadRequest(new ResponsePostCreateUser()
+                                    {
+                                        Status = "KO",
+                                        Message = $"{patient.Username} already exists in our database"
+                                    });
+                            }
+
+                            if (String.IsNullOrEmpty(patient.Password))
+                                return BadRequest(new GetResponse()
                                 {
                                     Status = "KO",
-                                    Message = $"{patient.Username} already exists in our database"
+                                    Message = $"Password cannot be null or empty"
                                 });
+
                             //scambio i valori del vecchio paziente col nuovo
                             NewPatient(patient, oldPatient);
 
