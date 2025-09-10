@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Hospital.Models.Doctor;
+using Hospital.Models.Nurse;
+using Hospital.Models.Patient;
 using Hospital.Models.ValidationAttributes;
 
 namespace Hospital.Models.Appointment
@@ -31,5 +34,31 @@ namespace Hospital.Models.Appointment
 
         [Display(Name = "Date and Time")]
         public DateTime Date { get; set; }
+    }
+
+    public class AppointmentEditPageViewModel
+    {
+        public List<PatientViewModel> Patients { get; set; } = new();
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+        public List<NurseViewModel> Nurses { get; set; } = new();
+
+        // Aggiungo tutti gli appuntamenti
+        public List<AppointmentViewModel> Appointments { get; set; } = new();
+
+        // Appuntamento selezionato da modificare
+        public AppointmentCreateEditViewModel AppointmentToEdit { get; set; } = new();
+    }
+
+    public class AppointmentDeletePageViewModel
+    {
+        public List<PatientViewModel> Patients { get; set; } = new();
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+        public List<NurseViewModel> Nurses { get; set; } = new();
+
+        // Aggiungo tutti gli appuntamenti
+        public List<AppointmentViewModel> Appointments { get; set; } = new();
+
+        // Appuntamento selezionato da modificare
+        public AppointmentCreateEditViewModel AppointmentToDelete { get; set; } = new();
     }
 }

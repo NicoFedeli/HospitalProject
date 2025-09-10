@@ -36,9 +36,7 @@ namespace Hospital.Models.Appointment
         [Display(Name = "Department")]
         [DepartmentValidation(ErrorMessage = "Invalid department")]
         public string Department { get; set; }
-
     }
-
 
     public class CreateAppointmentViewModel
     {

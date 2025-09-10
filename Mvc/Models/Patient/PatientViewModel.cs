@@ -14,6 +14,8 @@ namespace Hospital.Models.Patient
 
         [DisplayName("Username")]
         public string Username { get; set; }
+        [DisplayName("Password")]
+        public string Password { get; set; }
 
         [DisplayName("Age")]
         public int Age { get; set; }
@@ -23,5 +25,23 @@ namespace Hospital.Models.Patient
 
         [DisplayName("Phone")]
         public string Phone { get; set; }
+    }
+
+    public class PatientEditPageViewModel
+    {
+        // Lista dei dottori per la tendina
+        public List<PatientViewModel> Patients { get; set; } = new();
+
+        // Doctor selezionato e modificabile
+        public PatientEditViewModel PatientToEdit { get; set; } = new();
+    }
+
+    public class PatientDeletePageViewModel
+    {
+        // Lista dei dottori per la tendina
+        public List<PatientViewModel> Patients { get; set; } = new();
+
+        // Doctor selezionato e modificabile
+        public PatientEditViewModel PatientToDelete { get; set; } = new();
     }
 }

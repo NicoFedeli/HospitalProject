@@ -1,0 +1,150 @@
+﻿@model Hospital.Models.Record.RecordsPageViewModel
+
+@{
+    ViewData["Title"] = "Total Records";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+
+<!-- Page header -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Patient Records</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">View Records</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" id="filterPatient" class="form-control" placeholder="Filter by Patient Username" />
+    </div>
+    <div class="col-md-4">
+        <input type="text" id="filterDoctor" class="form-control" placeholder="Filter by Doctor Username" />
+    </div>
+    <div class="col-md-4">
+        <input type="text" id="filterNurse" class="form-control" placeholder="Filter by Nurse Username" />
+    </div>
+</div>
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">All Patient Records</h3>
+            </div>
+            <div class="card-body">
+                @if (!Model.Records.Any())
+                {
+                    <div class="alert alert-warning">No records found.</div>
+                }
+                else
+                {
+                    <table id="recordsTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Username</th>
+                                <th>Doctor Username</th>
+                                <th>Nurse Username</th>
+                                <th>Diagnosis</th>
+                                <th>Treatment</th>
+                                <th>Presciprion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.Records)
+                            {
+                                <tr>
+                                    <td>@record.ID</td>
+                                    <td>@record.PatientName</td>
+                                    <td>@record.DoctorName</td>
+                                    <td>@record.NurseName</td>
+                                    <td>@record.Diagnosis</td>
+                                    <td>@record.Treatment</td>
+                                    <td>@record.Prescription</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Username</th>
+                                <th>Doctor Username</th>
+                                <th>Nurse Username</th>
+                                <th>Diagnosis</th>
+                                <th>Treatment</th>
+                                <th>Presciprion</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/jszip/jszip.min.js"></script>
+    <script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $("#recordsTable").DataTable({
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false,
+                buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            });
+
+            table.buttons().container().appendTo('#recordsTable_wrapper .col-md-6:eq(0)');
+
+            // Filtri custom
+            $('#filterPatient').on('keyup', function () {
+                table.column(1).search(this.value).draw();
+            });
+            $('#filterDoctor').on('keyup', function () {
+                table.column(2).search(this.value).draw();
+            });
+            $('#filterNurse').on('keyup', function () {
+                table.column(3).search(this.value).draw();
+            });
+        });
+    </script>
+}

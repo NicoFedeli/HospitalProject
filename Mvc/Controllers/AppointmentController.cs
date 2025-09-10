@@ -120,5 +120,160 @@ namespace Hospital.Controllers
             return model;
         }
 
+
+        // GET: /Appointment/Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+
+            var model = new AppointmentEditPageViewModel();
+
+            try
+            {
+
+                var doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctors.Data ?? new List<DoctorViewModel>();
+
+                var nurses = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nurses.Data ?? new List<NurseViewModel>();
+
+                var patients = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patients.Data ?? new List<PatientViewModel>();
+
+                // Recupero tutti gli appuntamenti
+                var appointmentsResponse = await _api.GetAsync<List<AppointmentViewModel>>("api/Appointment/GetAllAppointments");
+                model.Appointments = appointmentsResponse?.Data ?? new List<AppointmentViewModel>();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorTitle"] = "Error during data fetching.";
+                TempData["ErrorMessage"] = ex.Message;
+
+                // In caso di errore, passo comunque un modello vuoto per evitare crash
+                return View(model);
+            }
+        }
+
+
+        // POST: /Appointment/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(AppointmentEditPageViewModel model)
+        {
+            // 1️ Controllo validazione del form
+            if (!ModelState.IsValid)
+            {
+                // Ricarico le liste per mantenere la pagina funzionante
+                var doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctors.Data ?? new List<DoctorViewModel>();
+
+                var nurses = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nurses.Data ?? new List<NurseViewModel>();
+
+                var patients = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patients.Data ?? new List<PatientViewModel>();
+
+                // Recupero tutti gli appuntamenti
+                var appointmentsResponse = await _api.GetAsync<List<AppointmentViewModel>>("api/Appointment/GetAllAppointments");
+                model.Appointments = appointmentsResponse?.Data ?? new List<AppointmentViewModel>();
+
+                return View(model);
+            }
+
+            // 2️ Controllo ruolo utente
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != "DoctorAdmin")
+            {
+                TempData["ErrorTitle"] = "Unauthorized";
+                TempData["ErrorMessage"] = "You do not have permission to perform this action.";
+                return RedirectToAction("Edit");
+            }
+
+            // 3️ PUT verso la ServerAPI
+            var updateResponse = await _api.PutAsync<AppointmentCreateEditViewModel>(
+                "api/Appointment/ModifyAppointment",
+                model.AppointmentToEdit
+            );
+
+            // 4️ Gestione risposta
+            if (updateResponse != null && updateResponse.Status == "OK")
+            {
+                TempData["SuccessTitle"] = "Appointment updated successfully!";
+                TempData["SuccessMessage"] = $"Appointment ID {model.AppointmentToEdit.ID} was updated.";
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                TempData["ErrorTitle"] = "Update Failed";
+                TempData["ErrorMessage"] = updateResponse?.Message ?? "Unable to update appointment.";
+
+                // Ricarico liste per mostrare di nuovo la pagina senza errori di null reference
+                var doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctors.Data ?? new List<DoctorViewModel>();
+
+                var nurses = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nurses.Data ?? new List<NurseViewModel>();
+
+                var patients = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patients.Data ?? new List<PatientViewModel>();
+
+                // Recupero tutti gli appuntamenti
+                var appointmentsResponse = await _api.GetAsync<List<AppointmentViewModel>>("api/Appointment/GetAllAppointments");
+                model.Appointments = appointmentsResponse?.Data ?? new List<AppointmentViewModel>();
+
+
+                return View(model);
+            }
+        }
+
+        // GET: /Appointment/Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+
+            var model = new AppointmentEditPageViewModel();
+
+            try
+            {
+                var doctors = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = doctors.Data ?? new List<DoctorViewModel>();
+
+                var nurses = await _api.GetAsync<List<NurseViewModel>>("api/User/GetAllNurses");
+                model.Nurses = nurses.Data ?? new List<NurseViewModel>();
+
+                var patients = await _api.GetAsync<List<PatientViewModel>>("api/User/GetAllPatients");
+                model.Patients = patients.Data ?? new List<PatientViewModel>();
+
+                // Recupero tutti gli appuntamenti
+                var appointmentsResponse = await _api.GetAsync<List<AppointmentViewModel>>("api/Appointment/GetAllAppointments");
+                model.Appointments = appointmentsResponse?.Data ?? new List<AppointmentViewModel>();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorTitle"] = "Error during data fetching.";
+                TempData["ErrorMessage"] = ex.Message;
+
+                // In caso di errore, passo comunque un modello vuoto per evitare crash
+                return View(model);
+            }
+        }
     }
 }

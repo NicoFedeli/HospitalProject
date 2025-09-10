@@ -26,7 +26,7 @@ namespace Hospital.Models.Nurse
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 4)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
