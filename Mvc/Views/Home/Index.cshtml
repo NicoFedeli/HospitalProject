@@ -2,21 +2,16 @@
     ViewData["Title"] = "Home Page";
 }
 @* Prendo i campi dei department *@
-@using Hospital.Models.Enums;
+@using Hospital.Helpers;
 @using Newtonsoft.Json; @* Per serializzare in JSON *@
 @model Hospital.Models.Home.DashboardViewModel
 
 @* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
 @{
-    var departmentColors = new Dictionary<Department, string>
-    {
-        { Department.Cardiology, "bg-danger" },      // rosso
-        { Department.Neurology, "bg-primary" },      // blu
-        { Department.Pediatrics, "bg-warning" },     // giallo
-        { Department.Emergency, "bg-success" },      // verde
-        { Department.General, "bg-info" }            // azzurro
-    };
+    var departmentColors = DepartmentHelper.GetDepartmentColors();
+    var departments = DepartmentHelper.GetDepartmentList().Select(d => d.Value);
 }
+
 
 
 <!DOCTYPE html>
@@ -140,17 +135,17 @@
                                     </div>
                                     <div class="card-body">
                                         <!-- the events -->
-                                    <div id="external-events">
-                                        @foreach (var department in Enum.GetValues(typeof(Department)))
-                                        {
-                                            <button type="button"
-                                                    class="btn btn-sm text-white w-100 mb-2 @departmentColors[(Department)department]"
-                                                    data-department="@department"
-                                                    style="font-size: 0.9rem; padding: 0.4em 0.8em; border-radius: 0.25rem; letter-spacing: 0.5px;">
-                                                @department
-                                            </button>
-                                        }
-                                    </div>
+                                        <div id="external-events">
+                                            @foreach (var department in departments)
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-sm text-white w-100 mb-2 @departmentColors[department]"
+                                                        data-department="@department"
+                                                        style="font-size: 0.9rem; padding: 0.4em 0.8em; border-radius: 0.25rem; letter-spacing: 0.5px;">
+                                                    @department
+                                                </button>
+                                            }
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>

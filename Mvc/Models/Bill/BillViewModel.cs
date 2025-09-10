@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hospital.Models.Enums;
 
 namespace Hospital.Models.Bill
 {
@@ -19,6 +18,6 @@ namespace Hospital.Models.Bill
         public decimal Amount { get; set; }
 
         [Display(Name = "Status")]
-        public BillStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

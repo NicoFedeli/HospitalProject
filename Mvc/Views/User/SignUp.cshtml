@@ -3,7 +3,8 @@
 	ViewData["Title"] = "Registration";
 	Layout = "~/Views/Shared/_LoginRegisterLayout.cshtml";
 }
-@using Hospital.Models.Enums;
+@using Hospital.Helpers;
+@using Hospital.Models.Constant
 
 <div class="card-body register-card-body">
     <p class="login-box-msg">Register a new membership</p>
@@ -132,7 +133,7 @@
 
                             <div class="form-group">
                                 <label asp-for="Nurse.Department"></label>
-                                <select asp-for="Nurse.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                <select asp-for="Nurse.Department" class="form-control" asp-items="DepartmentHelper.GetDepartmentList()">
                                     <option value="">Select Department</option>
                                 </select>
                                 <span asp-validation-for="Nurse.Department" class="text-danger"></span>
@@ -160,7 +161,7 @@
 
                             <div class="form-group">
                                 <label asp-for="Doctor.Department"></label>
-                                <select asp-for="Doctor.Department" class="form-control" asp-items="Html.GetEnumSelectList<Department>()">
+                                <select asp-for="Doctor.Department" class="form-control" asp-items="DepartmentHelper.GetDepartmentList()">
                                     <option value="">Select Department</option>
                                 </select>
                                 <span asp-validation-for="Doctor.Department" class="text-danger"></span>
@@ -176,7 +177,7 @@
 
                             <div class="form-group">
                                 <label asp-for="Doctor.Speciality"></label>
-                                <select asp-for="Doctor.Speciality" class="form-control" asp-items="Html.GetEnumSelectList<Speciality>()">
+                                <select asp-for="Doctor.Speciality" class="form-control" asp-items="SpecialityHelper.GetSpecialityList()">
                                     <option value="">Select Speciality</option>
                                 </select>
                                 <span asp-validation-for="Doctor.Speciality" class="text-danger"></span>

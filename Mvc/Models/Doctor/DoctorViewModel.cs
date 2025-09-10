@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Hospital.Models.Enums;
 
 namespace Hospital.Models.Doctor
 {
@@ -14,7 +13,7 @@ namespace Hospital.Models.Doctor
         public string Surname { get; set; }
 
         [DisplayName("Specitlity")]
-        public Speciality? Speciality { get; set; }
+        public string? Speciality { get; set; }
 
         [DisplayName("Username")]
         public string Username { get; set; }
@@ -23,7 +22,7 @@ namespace Hospital.Models.Doctor
         public string Phone { get; set; }
 
         [DisplayName("Department")]
-        public Department? Department { get; set; }
+        public string? Department { get; set; }
     }
 
 
@@ -31,4 +30,14 @@ namespace Hospital.Models.Doctor
     {
         public List<DoctorViewModel> Doctors { get; set; } = new();
     }
+
+    public class DoctorEditPageViewModel
+    {
+        // Lista dei dottori per la tendina
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+
+        // Doctor selezionato e modificabile
+        public DoctorEditViewModel DoctorToEdit { get; set; } = new();
+    }
+
 }
