@@ -16,7 +16,7 @@ namespace HospitalAPI.Controllers
             _logger = logger;
         }
 
-        //SOLO TEST
+        //SOLO TEST RITORNA TUTTI GLI APPUNTAMENTI
         [HttpGet("GetAllAppointments", Name = "GetAllAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -85,7 +85,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //Crea un appuntamento
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPost("CreateAppointment", Name = "CreateAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -96,28 +96,32 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        context.appointments.Add(appointment);
-                        context.SaveChanges();
-                        var response = new GetResponse()
+                        try
                         {
-                            Status = "OK",
-                            Message = "Appointment succesfully created"
-                        };
-                        return Ok(response);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
+                            context.appointments.Add(appointment);
+                            context.SaveChanges();
+                            transaction.Commit();
+                            var response = new GetResponse()
+                            {
+                                Status = "OK",
+                                Message = "Appointment succesfully created"
+                            };
+                            return Ok(response);
+                        }
+                        catch (Exception ex)
                         {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            return BadRequest(new GetResponse()
+                            {
+                                Status = "KO",
+                                Message = ex.Message
+                            });
+                        }
                     }
-
                 }
             }
             catch (Exception ex)
@@ -132,6 +136,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorna tutti gli appuntamenti di un paziente specifico, futuri e passati
         [Authorize(Roles = "Patient")]
         [HttpGet("GetAllPatientAppointments", Name = "GetAllPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
@@ -201,6 +206,8 @@ namespace HospitalAPI.Controllers
                 });
             }
         }
+
+        //ritorna tutti gli appuntamenti futuri di un paziente specifico
 
         [Authorize(Roles = "Patient")]
         [HttpGet("GetFuturePatientAppointments", Name = "GetFuturePatientAppointments")]
@@ -274,7 +281,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //ritorna tutti gli appuntamenti passati di un paziente specifico
         [Authorize(Roles = "Patient")]
         [HttpGet("GetPastPatientAppointments", Name = "GetPastPatientAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
@@ -347,6 +354,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorno tutti gli appuntamenti di un determinato reparto
         [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpGet("GetAllDepartmentAppointments", Name = "GetAllDepartmentAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
@@ -416,6 +424,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorno tutti gli appuntamenti di un dottore specifico, futuri e passati
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetAllDoctorAppointments", Name = "GetAllDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
@@ -487,7 +496,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
-
+        //ritorno tutti gli appuntamenti futuri di un dottore specifico
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetFutureDoctorAppointments", Name = "GetFutureDoctorAppointments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentResponse))]
@@ -560,6 +569,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //ritorno tutti gli appuntamenti passati di un dottore specifico
 
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpGet("GetPastDoctorAppointments", Name = "GetPastDoctorAppointments")]
@@ -633,6 +643,7 @@ namespace HospitalAPI.Controllers
             }
         }
 
+        //Modifica di un appuntamento 
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpPut("ModifyAppointment", Name = "ModifyApointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -643,38 +654,42 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        var oldAppointment = context.appointments.FirstOrDefault(x => x.ID == appointment.ID);
-                        if (oldAppointment == null)
+                        try
+                        {
+                            //controllo che esista un appuntamento con l'id passato alla funzione
+                            var oldAppointment = context.appointments.FirstOrDefault(x => x.ID == appointment.ID);
+                            if (oldAppointment == null)
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No appointments found with id {appointment.ID}"
+                                });
+
+                            //sostituisco i valori nuovi ai vecchi
+                            NewAppointment(appointment, oldAppointment);
+
+                            //non eseguo controlli su id perche lato db ho le foreign key e anche i dottori/infermieri/pazienti possono essere cambiati
+                            context.SaveChanges();
+                            transaction.Commit();
+                            return Ok(new GetResponse()
+                            {
+                                Status = "OK",
+                                Message = $"Appointment {appointment.ID} successfully modified "
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
                             return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Message = $"No appointments found with id {appointment.ID}"
+                                Message = ex.Message
                             });
-
-                        oldAppointment.IDPatient = appointment.IDPatient;
-                        oldAppointment.IDDoctor = appointment.IDDoctor;
-                        oldAppointment.Department = appointment.Department;
-                        oldAppointment.Date = appointment.Date;
-                        
-                        context.SaveChanges();
-
-                        return Ok(new GetResponse()
-                        {
-                            Status = "OK",
-                            Message = $"Appointment {appointment.ID} successfully modified "
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
-                        {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                        }
                     }
 
                 }
@@ -692,6 +707,8 @@ namespace HospitalAPI.Controllers
 
         }
 
+        
+        //Cancellazione di un appuntamento
         [Authorize(Roles = "DoctorAdmin,Doctor")]
         [HttpDelete("DeleteAppointment", Name = "DeleteAppointment")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetResponse))]
@@ -702,34 +719,39 @@ namespace HospitalAPI.Controllers
             {
                 using (var context = new HospitalDbContext())
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        var oldAppointment = context.appointments.FirstOrDefault(x => x.ID == appointmentId);
-                        if (oldAppointment == null)
+                        try
+                        {
+                            //controllo che esista l'appuntamento
+                            var oldAppointment = context.appointments.FirstOrDefault(x => x.ID == appointmentId);
+                            if (oldAppointment == null)
+                                return BadRequest(new GetResponse()
+                                {
+                                    Status = "KO",
+                                    Message = $"No appointments found with id {appointmentId}"
+                                });
+
+                            context.appointments.Remove(oldAppointment);
+                            context.SaveChanges();
+                            transaction.Commit();
+                            return Ok(new GetResponse()
+                            {
+                                Status = "OK",
+                                Message = $"Appointment {appointmentId} successfully deleted "
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
                             return BadRequest(new GetResponse()
                             {
                                 Status = "KO",
-                                Message = $"No appointments found with id {appointmentId}"
+                                Message = ex.Message
                             });
-
-                        context.appointments.Remove(oldAppointment);
-                        context.SaveChanges();
-
-                        return Ok(new GetResponse()
-                        {
-                            Status = "OK",
-                            Message = $"Appointment {appointmentId} successfully deleted "
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(ex.StackTrace);
-                        return BadRequest(new GetResponse()
-                        {
-                            Status = "KO",
-                            Message = ex.Message
-                        });
+                        }
                     }
 
                 }
@@ -745,6 +767,14 @@ namespace HospitalAPI.Controllers
                 });
             }
 
+        }
+        private static void NewAppointment(Appointment appointment, Appointment oldAppointment)
+        {
+            oldAppointment.IDPatient = appointment.IDPatient;
+            oldAppointment.IDDoctor = appointment.IDDoctor;
+            oldAppointment.IDNurse = appointment.IDNurse;
+            oldAppointment.Department = appointment.Department;
+            oldAppointment.Date = appointment.Date;
         }
     }
 }

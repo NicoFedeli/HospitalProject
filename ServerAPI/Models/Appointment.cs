@@ -13,7 +13,8 @@ namespace HospitalAPI.Models
         public int IDPatient { get; set; }
         [Required]
         public int IDDoctor { get; set; }
-        public int? IDNurse {get; set; } // l'infermiera può non servire durante l'appuntamento
+        [Required]
+        public int IDNurse {get; set; }
         [Required]
         public DateTime Date { get; set; }
         [Required]
