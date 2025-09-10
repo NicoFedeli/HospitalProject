@@ -4,7 +4,8 @@
 @using Hospital.Helpers;
 @* @model Hospital.Models.Doctor.DoctorViewModel *@
 
-@model List<Hospital.Models.Doctor.DoctorEditPageViewModel>
+@model Hospital.Models.Doctor.DoctorEditPageViewModel;
+
 @* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
 @{
     var departmentColors = DepartmentHelper.GetDepartmentColors();
@@ -53,7 +54,7 @@
     <div class="container-fluid">
         <div class="row">
 
-           @*  <div class="col-12">
+            <div class="col-12">
                 <!-- Selezione del dottore -->
                 <div class="form-group">
                     <label for="doctorSelect">Select a Doctor</label>
@@ -67,7 +68,8 @@
                                     data-username="@doctor.Username" 
                                     data-phone="@doctor.Phone" 
                                     data-speciality="@doctor.Speciality" 
-                                    data-department="@doctor.Department">
+                                    data-department="@doctor.Department"
+                                    data-password="@doctor.">
                                 @doctor.Name @doctor.Surname (@doctor.Username)
                             </option>
                         }
@@ -79,27 +81,32 @@
 
                     <input type="hidden" asp-for="DoctorToEdit.ID" />
 
+					<!-- Name -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Name"></label>
                         <input asp-for="DoctorToEdit.Name" class="form-control" />
                         <span asp-validation-for="DoctorToEdit.Name" class="text-danger"></span>
                     </div>
 
+					<!-- Surname -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Surname"></label>
                         <input asp-for="DoctorToEdit.Surname" class="form-control" />
                         <span asp-validation-for="DoctorToEdit.Surname" class="text-danger"></span>
                     </div>
+                    
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label asp-for="DoctorToEdit.Username"></label>
+                        <input asp-for="DoctorToEdit.Username" class="form-control" readonly/>
+                        @* <span asp-validation-for="DoctorToEdit.Username" class="text-danger"></span> *@
+                    </div>
 
                     <!-- Speciality -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Speciality"></label>
-                        <select asp-for="DoctorToEdit.Speciality" class="form-control">
-                            <option value="">-</option>
-                            @foreach (var spec in Enum.GetValues(typeof(Speciality)))
-                            {
-                                <option value="@spec">@spec</option>
-                            }
+                        <select asp-for="DoctorToEdit.Speciality" class="form-control" asp-items="SpecialityHelper.GetSpecialityList()">
+                            <option value="">Select Speciality</option>
                         </select>
                         <span asp-validation-for="DoctorToEdit.Speciality" class="text-danger"></span>
                     </div>
@@ -107,16 +114,13 @@
                     <!-- Department -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Department"></label>
-                        <select asp-for="DoctorToEdit.Department" class="form-control">
-                            <option value="">-</option>
-                            @foreach (var dept in Enum.GetValues(typeof(Department)))
-                            {
-                                <option value="@dept">@dept</option>
-                            }
+                        <select asp-for="DoctorToEdit.Department" class="form-control" asp-items="DepartmentHelper.GetDepartmentList()">
+                            <option value="">Select Department</option>
                         </select>
                         <span asp-validation-for="DoctorToEdit.Department" class="text-danger"></span>
                     </div>
 
+                    <!-- Phone -->
                     <div class="form-group">
                         <label asp-for="DoctorToEdit.Phone"></label>
                         <input asp-for="DoctorToEdit.Phone" class="form-control" />
@@ -126,7 +130,7 @@
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
- *@
+
         </div>
     </div>
 </section>
@@ -153,6 +157,7 @@
     <script>
         document.getElementById('doctorSelect').addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
+			console.log(selectedOption);
 
             document.querySelector('[name="DoctorToEdit.ID"]').value = selectedOption.value;
             document.querySelector('[name="DoctorToEdit.Name"]').value = selectedOption.dataset.name;

@@ -37,7 +37,7 @@ namespace Hospital.Models.Doctor
         public List<DoctorViewModel> Doctors { get; set; } = new();
 
         // Doctor selezionato e modificabile
-        public DoctorCreateViewModel DoctorToEdit { get; set; } = new();
+        public DoctorEditViewModel DoctorToEdit { get; set; } = new();
     }
 
 }

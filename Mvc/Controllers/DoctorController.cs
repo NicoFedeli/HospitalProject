@@ -71,5 +71,46 @@ namespace Hospital.Controllers
 
             return View(model);
         }
+
+        // POST: /Doctor/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(DoctorEditPageViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Ricarico la lista dottori in caso di errore
+                var response = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+                model.Doctors = response?.Data ?? new List<DoctorViewModel>();
+
+                return View(model);
+            }
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (role != "DoctorAdmin")
+            {
+                TempData["ErrorTitle"] = "Unauthorized";
+                TempData["ErrorMessage"] = "You do not have permission to perform this action.";
+                return RedirectToAction("Edit");
+            }
+            var updateResponse = await _api.PutAsync<DoctorCreateViewModel>(
+                "api/User/ModifyDoctor",
+                model.DoctorToEdit
+            );
+
+            if (updateResponse.Status == "OK")
+            {
+                TempData["SuccessTitle"] = "Doctor updated successfully!";
+                TempData["SuccessMessage"] = $"Doctor ID {model.DoctorToEdit.ID} was updated.";
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                TempData["ErrorTitle"] = "Update Failed";
+                TempData["ErrorMessage"] = updateResponse.Message ?? "Unable to update doctor.";
+                return View(model);
+            }
+        }
+
     }
 }
