@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Hospital.Models;
 using Hospital.Models.Doctor;
+using Hospital.Models.Nurse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,18 +57,18 @@ namespace Hospital.Controllers
 
             var response = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
 
+            var model = new DoctorEditPageViewModel();
 
             if (response == null || response.Data == null)
             {
                 TempData["ErrorTitle"] = "Error during data fetching.";
-                TempData["ErrorMessage"] = "Unable to fetch doctors at the moment. Please try again later.";
-                return View(new List<DoctorViewModel>());
+                TempData["ErrorMessage"] = "Unable to fetch nurses at the moment. Please try again later.";
+                model.Doctors = new List<DoctorViewModel>(); // Provide an empty list to avoid null reference
             }
-
-            var model = new DoctorEditPageViewModel
+            else
             {
-                Doctors = response.Data
-            };
+                model.Doctors = response.Data;
+            }
 
             return View(model);
         }
@@ -110,6 +111,74 @@ namespace Hospital.Controllers
                 TempData["ErrorMessage"] = updateResponse.Message ?? "Unable to update doctor.";
                 return View(model);
             }
+        }
+
+        // GET: /Doctor/Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+
+
+            var response = await _api.GetAsync<List<DoctorViewModel>>("api/User/GetAllDoctors");
+
+            var model = new DoctorDeletePageViewModel();
+
+            if (response == null || response.Data == null)
+            {
+                TempData["ErrorTitle"] = "Error during data fetching.";
+                TempData["ErrorMessage"] = "Unable to fetch nurses at the moment. Please try again later.";
+                model.Doctors = new List<DoctorViewModel>(); // Provide an empty list to avoid null reference
+            }
+            else
+            {
+                model.Doctors = response.Data;
+            }
+
+            return View(model);
+        }
+
+        // POST: /Doctor/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(DoctorDeletePageViewModel model)
+        {
+            if (model.DoctorToDelete == null || model.DoctorToDelete.ID <= 0)
+            {
+                TempData["ErrorTitle"] = "Invalid Doctor";
+                TempData["ErrorMessage"] = "Please select a valid doctor to delete.";
+                return RedirectToAction("Delete");
+            }
+
+            // Controllo permessi
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != "DoctorAdmin")
+            {
+                TempData["ErrorTitle"] = "Unauthorized";
+                TempData["ErrorMessage"] = "You do not have permission to perform this action.";
+                return RedirectToAction("Delete");
+            }
+
+            // Eseguo la DELETE sull'API
+            var response = await _api.DeleteAsync<object>($"api/User/DeleteDoctor?doctorId={model.DoctorToDelete.ID}");
+
+            if (response.Status == "OK")
+            {
+                TempData["SuccessTitle"] = "Doctor Deleted!";
+                TempData["SuccessMessage"] = $"Doctor ID {model.DoctorToDelete.ID} was successfully removed.";
+            }
+            else
+            {
+                TempData["ErrorTitle"] = "Delete Failed";
+                TempData["ErrorMessage"] = response.Message ?? "Unable to delete doctor at this time.";
+            }
+
+            return RedirectToAction("Delete");
         }
 
     }

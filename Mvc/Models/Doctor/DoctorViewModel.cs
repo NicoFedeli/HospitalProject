@@ -18,6 +18,9 @@ namespace Hospital.Models.Doctor
         [DisplayName("Username")]
         public string Username { get; set; }
 
+        [DisplayName("Password")]
+        public string password { get; set; }
+
         [DisplayName("Phone")]
         public string Phone { get; set; }
 
@@ -39,5 +42,14 @@ namespace Hospital.Models.Doctor
         // Doctor selezionato e modificabile
         public DoctorEditViewModel DoctorToEdit { get; set; } = new();
     }
+
+    public class DoctorDeletePageViewModel
+    {
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+
+        // Doctor selezionato, utile per mostrare i dettagli
+        public DoctorEditViewModel DoctorToDelete { get; set; }
+    }
+
 
 }

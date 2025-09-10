@@ -35,11 +35,5 @@ namespace Hospital.Models.Record
         [StringLength(500, ErrorMessage = "Treatment must be max 500 characters")]
         [Display(Name = "Treatment")]
         public string Treatment { get; set; }
-
-        // Dropdown support
-        public List<SelectListItem> Patients { get; set; } = new List<SelectListItem>();
-        public List<SelectListItem> Doctors { get; set; } = new List<SelectListItem>();
-        public List<SelectListItem> Nurses { get; set; } = new List<SelectListItem>();
-
     }
 }

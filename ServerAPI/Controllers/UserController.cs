@@ -846,7 +846,7 @@ namespace HospitalAPI.Controllers
         }
 
         //Ritorna tutti i pazienti presenti nell ospedale
-        [Authorize(Roles = "DoctorAdmin,Doctor")]
+        [Authorize(Roles = "DoctorAdmin,Doctor,NurseAdmin,Nurse")]
         [HttpGet("GetAllPatients", Name = "GetAllPatients")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatientResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetResponse))]
@@ -1152,7 +1152,7 @@ namespace HospitalAPI.Controllers
                         {
                             Id = nurse.ID,
                             Username = nurse.Username,
-                            Role = "AdminNurse",
+                            Role = "NurseAdmin",
                             Token = token // Invio solo il token. nella richiesta inserisco davanti "Bearer "
                         }
                     });

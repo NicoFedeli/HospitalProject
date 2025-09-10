@@ -24,12 +24,14 @@ namespace Hospital.Models
         public string Username { get; set; }
 
         [DisplayName("Password")]
-        [Required, StringLength(100)]
+        [Required]
+        [StringLength(100, MinimumLength = 4)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [DisplayName("Confirm Password")]
         [Required, Compare(nameof(Password))]
+        [StringLength(100, MinimumLength = 4)]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 

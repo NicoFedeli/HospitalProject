@@ -1,0 +1,187 @@
+﻿@{
+    ViewData["Title"] = "Edit Delete";
+}
+@using Hospital.Helpers;
+
+@model Hospital.Models.Appointment.AppointmentDeletePageViewModel;
+
+@* Lista di Dipartimenti presenti nel sistema, ciascuno con un colore diverso *@
+@{
+    var departmentColors = DepartmentHelper.GetDepartmentColors();
+    var departments = DepartmentHelper.GetDepartmentList().Select(d => d.Value);
+	// Utilizzo delle SelectList per i dropdown
+    var doctorList = new SelectList(Model.Doctors, "ID", "Name");
+    var nurseList = new SelectList(Model.Nurses, "ID", "Name");
+    var patientList = new SelectList(Model.Patients, "ID", "Name");
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Total Appointments</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">Edit Delete</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-12">
+                <!-- Selezione del paziente -->
+                <div class="form-group">
+                    <label for="appointmentSelect">Select a Appointment</label>
+                    <select id="appointmentSelect" class="form-control select2" style="width: 100%;">
+                        <option selected disabled>-</option>
+                        @foreach (var appointment in Model.Appointments)
+                        {
+                            <option value="@appointment.ID"
+                                    data-idPatient="@appointment.IDPatient"
+                                    data-idDoctor="@appointment.IDDoctor"
+                                    data-idNurse="@appointment.IDNurse"
+                                    data-patientName="@appointment.PatientName"
+                                    data-doctorName="@appointment.DoctorName"
+                                    data-nurseName="@appointment.NurseName"
+                                    data-department="@appointment.Department"
+                                    data-date="@appointment.Date">
+                                @appointment.Date @appointment.PatientName (@appointment.DoctorName, @appointment.NurseName)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Form di edit -->
+                <form id="editAppointmentForm" asp-action="Edit" asp-controller="Appointment" method="post">
+
+                    <input type="hidden" asp-for="AppointmentToDelete.ID" />
+
+                    <!-- Doctor -->
+                    <div class="form-group">
+                        <label asp-for="AppointmentToDelete.IDDoctor">Select a Doctor</label>
+                        <select asp-for="AppointmentToDelete.IDDoctor" class="form-control" asp-items="doctorList">
+                            <option value="">Select a Doctor</option>
+                        </select>
+                        <span asp-validation-for="AppointmentToDelete.IDDoctor" class="text-danger"></span>
+                    </div>
+
+
+                    <!-- Nurse -->
+                    <div class="form-group">
+                        <label asp-for="AppointmentToDelete.IDNurse">Select a Nurse</label>
+                        <select asp-for="AppointmentToDelete.IDNurse" class="form-control" asp-items="nurseList">
+                            <option value="">Select a Nurse</option>
+                        </select>
+                        <span asp-validation-for="AppointmentToDelete.IDNurse" class="text-danger"></span>
+                    </div>
+
+
+                    <!-- Patient -->
+                    <div class="form-group">
+                        <label asp-for="AppointmentToDelete.IDPatient">Select a Patient</label>
+                        <select asp-for="AppointmentToDelete.IDPatient" class="form-control" asp-items="patientList">
+                            <option value="">Select a Patient</option>
+                        </select>
+                        <span asp-validation-for="AppointmentToDelete.IDPatient" class="text-danger"></span>
+                    </div>
+
+
+                    <!-- Department -->
+                    <div class="form-group">
+                        <label asp-for="AppointmentToDelete.Department"></label>
+                        <input asp-for="AppointmentToDelete.Department" class="form-control" />
+                        <span asp-validation-for="AppointmentToDelete.Department" class="text-danger"></span>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="form-group">
+                        <label asp-for="AppointmentToDelete.Date"></label>
+                        <input asp-for="AppointmentToDelete.Date" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="AppointmentToDelete.Date" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <!-- DataTables core -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- DataTables Responsive -->
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/jszip/jszip.min.js"></script>
+    <script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+    <script>
+        document.getElementById('appointmentSelect').addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            console.log(selectedOption);
+
+                 // Set dei valori base
+            document.querySelector('[name="AppointmentToDelete.ID"]').value = selectedOption.value;
+
+            const patientSelect = document.querySelector('[name="AppointmentToDelete.IDPatient"]');
+            const doctorSelect = document.querySelector('[name="AppointmentToDelete.IDDoctor"]');
+            const nurseSelect = document.querySelector('[name="AppointmentToDelete.IDNurse"]');
+
+            // Aggiorna i select e trigger change
+            patientSelect.value = selectedOption.dataset.idPatient;
+            patientSelect.dispatchEvent(new Event('change'));
+
+            doctorSelect.value = selectedOption.dataset.idDoctor;
+            doctorSelect.dispatchEvent(new Event('change'));
+
+            nurseSelect.value = selectedOption.dataset.idNurse;
+            nurseSelect.dispatchEvent(new Event('change'));
+
+            // Campi di testo
+            document.querySelector('[name="AppointmentToDelete.Department"]').value = selectedOption.dataset.department;
+            document.querySelector('[name="AppointmentToDelete.Date"]').value = selectedOption.dataset.date;
+
+        });
+    </script>
+}

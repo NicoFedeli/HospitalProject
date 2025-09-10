@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Hospital.Models.Doctor;
+using Hospital.Models.Nurse;
+using Hospital.Models.Patient;
 
 namespace Hospital.Models.Record
 {
@@ -37,5 +40,29 @@ namespace Hospital.Models.Record
 
         [Display(Name ="Treatment")]
         public string Treatment { get; set; }
+    }
+
+    public class RecordsPageViewModel
+    {
+        // Lista dei record del paziente selezionato
+        public List<RecordViewModel> Records { get; set; } = new();
+    }
+
+    public class CreateRecordsViewModel
+    {
+        // Lista pazienti per la tendina
+        public List<PatientViewModel> Patients { get; set; } = new();
+
+        //Lista dottori per la tendina
+        public List<DoctorViewModel> Doctors { get; set; } = new();
+
+        //Lista Infermieri per la tendina
+        public List<NurseViewModel> Nurses { get; set; } = new();
+
+        // Lista dei record del paziente selezionato
+        public List<RecordViewModel> Records { get; set; } = new();
+
+        // ID paziente selezionato
+        public int SelectedPatientId { get; set; }
     }
 }
