@@ -1,53 +1,51 @@
-# 🏥 Hospital Project
+# Hospital Project - Documentazione Tecnica
 
-> **Hospital management system** with role-based access control, appointment management, medical records, and payment tickets.
+## Introduzione
+Hospital Project è un'applicazione web basata su **ASP.NET Core MVC** per la gestione di un sistema ospedaliero.  
+Il sistema supporta operazioni amministrative e cliniche come gestione pazienti, appuntamenti e fatturazione.
 
----
+## Obiettivi
+- Gestione dati di pazienti, medici, infermieri e reparti
+- Pianificazione e tracciamento appuntamenti
+- Gestione delle fatturazioni e dei pagamenti
+- Gestione cartelle cliniche elettroniche
+- Sistema di autenticazione e ruoli
 
-## 📌 Functional Requirements
+## Architettura del sistema
+- **Controller**: Appointment, Bill, Doctor, Nurse, Patient, Record, User, Home
+- **Models**: entità e ViewModel
+- **Helpers**: gestione token, ruoli, dipartimenti, specialità
+- **Configurazione**: `Program.cs`, `appsettings.json`
 
-### 🔑 1. Authentication & Role-Based Access Control
-The system must provide a login mechanism with role-based permissions.  
-**Supported Roles:**
-- 👑 **Admin**
-- 🧑‍⚕️ **Head Doctor (Primary)**
-- 👩‍⚕️ **Head Nurse (Responsible Nurse)**
-- 🧑‍💻 **Standard Users**
-- 🩺 **Doctor**
-- 💉 **Nurse**
-- 🧍 **Patient**
+## Database
+Il database è basato su **SQL Server**.  
+La cartella `Database/` contiene `Hospital.zip` con schema e dati iniziali.
 
----
+## Tecnologie utilizzate
+- C# .NET
+- ASP.NET Core MVC
+- Visual Studio
+- Microsoft SQL Server
+- Git
 
-### 🧑‍⚕️ 2. Head Doctor (Primary)
-- ✅ Full CRUD on **Doctor / Nurse / Patient** within their department  
-- 📅 Full management of patient appointments  
-- 📄 Update medical records of all patients  
-- 💳 Create payment tickets for patients  
+## Funzionalità principali
+- Registrazione e login con ruoli
+- CRUD pazienti, medici, infermieri
+- Gestione appuntamenti
+- Gestione fatturazione
+- Cartelle cliniche e record medici
 
----
+## Installazione ed esecuzione
+1. Estrarre i file del progetto e aprire `Hospital.sln` in Visual Studio
+2. Configurare SQL Server con il dump in `Database/Hospital.zip`
+3. Aggiornare `appsettings.json` con le credenziali DB
+4. Compilare ed eseguire il progetto da Visual Studio o CLI .NET
+5. Accedere via browser a `https://localhost:5001`
 
-### 🩺 3. Doctor
-- ✅ Full CRUD on **their own appointments**  
-- 📄 Update medical records of patients they have treated  
-- 💳 Create payment tickets for patients they have visited  
-
----
-
-### 👩‍⚕️ 4. Head Nurse (Responsible Nurse)
-- ✏️ CRUD limited to **Nurse / Patient** within their department  
-- 📄 Update medical records of all patients in the department  
-
----
-
-### 💉 5. Nurse
-- 📄 Update medical records of patients they have **assisted or visited**  
-
----
-
-### 🧍 6. Patient
-Can view:  
-- 📄 Their own **medical records**  
-- 📅 Their own **appointments**  
-- 💳 Their own **payment tickets** (both paid and pending)  
-
+## Conclusioni
+Hospital Project fornisce una base per un sistema gestionale ospedaliero.  
+Sviluppi futuri:
+- Integrazione con sistemi esterni
+- Adozione standard HL7/FHIR
+- Interfaccia utente moderna (React/Angular)
+- Dashboard e reportistica avanzata
