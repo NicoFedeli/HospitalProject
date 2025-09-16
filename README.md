@@ -14,7 +14,8 @@ Il sistema supporta operazioni amministrative e cliniche come gestione pazienti,
 ## ⚙️ Installazione ed esecuzione
 1. Clonare il repository:
    ```bash
-   git clone https://github.com/tuo-username/Hospital-RCM.git```
+   git clone https://github.com/tuo-username/Hospital-RCM.git
+   ```
 2. Configurare SQL Server con il dump in Database/Hospital.zip
 
 3. Aggiornare appsettings.json con le credenziali del database
