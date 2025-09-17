@@ -43,7 +43,7 @@ namespace HospitalAPI.Controllers
                                            IDDoctor = r.IDDoctor,
                                            DoctorName = d.Username,
                                            IDNurse = r.IDNurse,
-                                           NurseName = nurse != null ? nurse.Username : null,
+                                           NurseName = nurse.Username ?? "",
                                            Diagnosis = r.Diagnosis,
                                            Prescription = r.Prescription,
                                            Treatment = r.Treatment
@@ -118,7 +118,7 @@ namespace HospitalAPI.Controllers
                                            IDDoctor = r.IDDoctor,
                                            DoctorName = d.Username,
                                            IDNurse = r.IDNurse,
-                                           NurseName = nurse != null ? nurse.Username : null,
+                                           NurseName = nurse.Username ?? "",
                                            Diagnosis = r.Diagnosis,
                                            Prescription = r.Prescription,
                                            Treatment = r.Treatment
@@ -189,7 +189,7 @@ namespace HospitalAPI.Controllers
                                            IDDoctor = r.IDDoctor,
                                            DoctorName = d.Username,
                                            IDNurse = r.IDNurse,
-                                           NurseName = nurse != null ? nurse.Username : null,
+                                           NurseName = nurse.Username ?? "",
                                            Diagnosis = r.Diagnosis,
                                            Prescription = r.Prescription,
                                            Treatment = r.Treatment
@@ -335,7 +335,7 @@ namespace HospitalAPI.Controllers
                                            IDDoctor = r.IDDoctor,
                                            DoctorName = d.Username,
                                            IDNurse = r.IDNurse,
-                                           NurseName = nurse != null ? nurse.Username : null,
+                                           NurseName = nurse.Username ?? "",
                                            Diagnosis = r.Diagnosis,
                                            Prescription = r.Prescription,
                                            Treatment = r.Treatment

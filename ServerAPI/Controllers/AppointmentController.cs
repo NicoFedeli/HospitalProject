@@ -39,7 +39,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -161,7 +161,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -233,7 +233,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -306,7 +306,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -379,7 +379,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -450,7 +450,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // o p.Name + " " + p.Surname 
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -521,7 +521,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
@@ -595,7 +595,7 @@ namespace HospitalAPI.Controllers
                                                 IDPatient = a.IDPatient,
                                                 PatientName = p.Username, // oppure p.Name + " " + p.Surname
                                                 IDNurse = a.IDNurse,
-                                                NurseName = nurse != null ? nurse.Username : null,
+                                                NurseName = nurse.Username ?? "",
                                                 IDDoctor = a.IDDoctor,
                                                 DoctorName = d.Username,
                                                 Department = a.Department,
